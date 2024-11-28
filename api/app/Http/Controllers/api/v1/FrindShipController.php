@@ -16,18 +16,20 @@ class FrindShipController extends Controller
         ]);
         $user=Auth::user();
         $relation= DB::table('relation')
-        ->where('relationable_type','=','App\Models\User')
+        
         ->where(function ($query)use($user,$request) {
             $query->where('user_id', '=', $user->id)
-                  ->where('relationable_id', '=', $request->user_id);
+                  ->where('relationable_id', '=', $request->user_id)
+                  ->where('relationable_type','=','App\Models\User');
         })
         ->orWhere(function ($query)use($user,$request) {
             $query->where('user_id', '=', $request->user_id)
-                  ->where('relationable_id', '=', $user->id);
+                  ->where('relationable_id', '=', $user->id)
+                  ->where('relationable_type','=','App\Models\User');
         })
         ->get();
         if($user->id==$request->user_id ||$relation->count()!=0){
-            return response()->json(null,403) ;
+            return response()->json(['sent before']) ;
         }
         $user->sendedUsers()->attach($request->user_id,['status'=>'not_confirm']);
         $user->recivedUsers;
@@ -57,9 +59,9 @@ class FrindShipController extends Controller
                  $query->where('relationable_id', '=', $user->id);
         })
         ->where('status','=','accpted')
-        ->get();
-        
-        return response()->json($freinds ) ;
+        ->get() ;
+        return $freinds ;
+       // return response()->json($user->freindes() ) ;
     }
 
     public function addGroup(Request $request){
@@ -70,8 +72,9 @@ class FrindShipController extends Controller
         $group=Group::find($request->group_id) ;
         $user=Auth::user() ; 
         $realtion=Relation::where([['user_id','=',$user->id],
-        ['relationable_type','=','App\Models\Group']]
+        ['relationable_type','=','App\Models\Group'],['relationable_id','=',$group->id]]
         )->get() ;
+        
         if($realtion->count()==0){
             $user->groups()->attach($request->group_id,['status'=>'not_confirm']) ;
             return response()->json($group) ;

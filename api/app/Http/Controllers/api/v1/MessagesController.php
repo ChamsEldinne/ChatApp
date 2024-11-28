@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\api\v1;
 
+use App\Http\Resources\api\v1\MessagesResource;
 use App\Models\Message;
 use App\Http\Controllers\Controller;
-use App\Models\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MessagesController extends Controller
 {
-
+    public function show(Message $message){
+        return  new MessagesResource($message) ;
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -20,13 +22,13 @@ class MessagesController extends Controller
     {
         $attributes = $request->validate([
             'message' => ['required'],
-            'group_or_user' => ['required', 'boolean'], // 1 user ,0 group 
+            'group_or_friend' => ['required', 'boolean'], // 1 user ,0 group 
             'reciver_id' => ['required'],
         ]);
         $user = Auth::user();
-
-
-        if ($attributes['group_or_user']) {
+        $relation = collect();
+        //can't send message to not firnd user and can send message to himself ;
+        if ($attributes['group_or_friend']) {
             //check if the reciver user and the sender user are friend
             $relation = DB::table('relation')
                 ->where('relationable_type', '=', 'App\Models\User')
@@ -39,35 +41,24 @@ class MessagesController extends Controller
                         ->where('relationable_id', '=', $user->id);
                 })->where('status', '=', 'accpted')
                 ->get();
-
-            if ($relation->count() != 0) {
-                $messge = Message::create([
-                    'user_id' => $user->id,
-                    'message' => $request->message,
-                    'messageable_type' => 'App\Models\User',
-                    'messageable_id' => $request->reciver_id
-                ]);
-                return response()->json($messge);
-            }
-            return response()->json(null, 403);
+        } else {
+            //check if the sender user are accpeted in the group 
+            $relation = DB::table('relation')
+                ->where('relationable_type', '=', 'App\Models\Group')
+                ->where(function ($query) use ($user, $request) {
+                    $query->where('user_id', '=', $user->id)
+                        ->where('relationable_id', '=', $request->reciver_id);
+                })->where('status', '=', 'accpted')
+                ->get();
         }
-
-        //check if the sender user are accpeted in the group 
-        $relation = DB::table('relation')
-            ->where('relationable_type', '=', 'App\Models\Group')
-            ->where(function ($query) use ($user, $request) {
-                $query->where('user_id', '=', $user->id)
-                    ->where('relationable_id', '=', $request->reciver_id);
-            })->where('status', '=', 'accpted')
-            ->get();
         if ($relation->count() != 0) {
             $messge = Message::create([
                 'user_id' => $user->id,
                 'message' => $request->message,
-                'messageable_type' => 'App\Models\Group',
+                'messageable_type' => $request->group_or_friend ? "App\Models\User" : 'App\Models\Group',
                 'messageable_id' => $request->reciver_id
             ]);
-            return response()->json($messge);
+            return new MessagesResource($messge) ;
         }
         return response()->json(null, 403);
     }

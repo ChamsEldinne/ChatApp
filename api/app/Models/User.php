@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
+
 
 
 class User extends Authenticatable
@@ -60,6 +62,18 @@ class User extends Authenticatable
         return $this->morphedByMany(Group::class,'relationable','relation')->withPivot('status') ;
     }
 
+    public function freindes(){
+        return DB::table('relation')
+        ->where('relationable_type','=','App\Models\User')
+        ->where(function ($query) {
+            $query->where('user_id', '=', $this->id) ;
+        })
+        ->orWhere(function ($query) {
+                 $query->where('relationable_id', '=', $this->id);
+        })
+        ->where('status','=','accpted')
+        ->get();
+    }
 
     
     public function sendedUsers(){
