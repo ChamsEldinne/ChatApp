@@ -27,7 +27,7 @@ class GetMessanger extends Controller
                     name as freinde_name,
                     message,
                     messageable_type,
-                    messages.created_at
+                    Max(messages.created_at) as lates_message_date
                 FROM messages
                 JOIN users 
                     ON (CASE 

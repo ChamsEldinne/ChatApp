@@ -2,7 +2,7 @@ import React from 'react'
 
 function GroupContactContainer() {
   return (
-    <div className="flex justify-between items-center p-3 hover:bg-gray-800 rounded-lg relative">
+    <div className="flex justify-between items-center p-3 cursor-pointer hover:bg-gray-800 rounded-lg relative">
         <div className="w-16 h-16 relative flex flex-shrink-0">
             <img className="shadow-md rounded-full w-10 h-10 object-cover absolute ml-6"
                   src="https://randomuser.me/api/portraits/men/22.jpg"

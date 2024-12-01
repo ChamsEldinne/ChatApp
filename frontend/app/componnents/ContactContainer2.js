@@ -2,7 +2,7 @@ import React from 'react'
 
 function ContactContainer2() {
   return (
-    <div className="flex justify-between items-center p-3 hover:bg-gray-800 rounded-lg relative">
+    <div className="flex justify-between items-center cursor-pointer p-3 hover:bg-gray-800 rounded-lg relative">
     <div className="w-16 h-16 relative flex flex-shrink-0">
         <img className="shadow-md rounded-full w-full h-full object-cover"
              src="https://randomuser.me/api/portraits/men/97.jpg"

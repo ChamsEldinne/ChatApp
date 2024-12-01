@@ -32,8 +32,8 @@ class GetMessages extends Controller
                             ->where('user_id', $user->id);
             });
         })
-        ->orderBy('id', 'desc') // Replace 'id' with 'created_at' if you want to sort by the latest creation date
-        ->paginate(20);
+        ->orderBy('created_at', 'desc') // Replace 'id' with 'created_at' if you want to sort by the latest creation date
+        ->paginate(10);
         return response()->json( [
             'reciver'=>User::find($request->reciver_id) ,
             'messages'=>MessagesResource::collection($messages) ,
