@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Events\sendMessageEvent ;
 
 class MessagesController extends Controller
 {
@@ -52,14 +53,19 @@ class MessagesController extends Controller
                 ->get();
         }
         if ($relation->count() != 0) {
-            $messge = Message::create([
+            
+            $message = Message::create([
                 'user_id' => $user->id,
                 'message' => $request->message,
                 'messageable_type' => $request->group_or_friend ? "App\Models\User" : 'App\Models\Group',
                 'messageable_id' => $request->reciver_id
             ]);
-            return new MessagesResource($messge) ;
+           // sendMessageEvent::dispatch($message) ;
+            broadcast(new sendMessageEvent($message))   ;
+            return new MessagesResource($message) ;
         }
+
+
         return response()->json(null, 403);
     }
 
@@ -74,7 +80,7 @@ class MessagesController extends Controller
         $user = Auth::user();
         if ($user->id == $message->user_id) {
             $message->update(["message" => $request->message]);
-            return response()->json($message);
+            return new MessagesResource($message) ;
         }
         return response()->json(null, 403);
     }

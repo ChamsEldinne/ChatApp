@@ -1,5 +1,5 @@
 import Message from "./Message";
-function MessageContainer({block=[]}){  
+function MessageContainer({block=[],setMessages}){  
 
   const formatter = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -21,7 +21,7 @@ function MessageContainer({block=[]}){
             />
           </div>
           <div className="messages text-sm text-gray-700 grid grid-flow-row gap-2">
-              {block.map((message,index)=><Message key={index} message={message} prev={index!=0} next={index<block.length-1}  />)}
+              {block.map((message,index)=><Message key={index} setMessages={setMessages} message={message} prev={index!=0} next={index<block.length-1}  />)}
           </div>
       </div>
     </div>

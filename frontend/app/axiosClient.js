@@ -6,7 +6,6 @@ const axiosClient=axios.create({
    },
    withCredentials:true,
    withXSRFToken:true ,
-
 })
 
 export default axiosClient ;

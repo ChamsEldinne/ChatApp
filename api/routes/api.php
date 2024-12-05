@@ -14,10 +14,10 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/broadcast',function(){
-    broadcast(new ExampleEvenet('dasdasdas')) ;
-    return response()->json(['fhjhh']) ;
-}) ;
+// Route::get('/broadcast',function(){
+//     broadcast(new ExampleEvenet('dasdasdas')) ;
+//     return response()->json(['fhjhh']) ;
+// }) ;
 
 
 Route::post('/register',[AuthController::class,'register']) ;

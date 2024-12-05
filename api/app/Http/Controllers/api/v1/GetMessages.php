@@ -35,7 +35,7 @@ class GetMessages extends Controller
         ->orderBy('created_at', 'desc') // Replace 'id' with 'created_at' if you want to sort by the latest creation date
         ->paginate(10);
         return response()->json( [
-            'reciver'=>User::find($request->reciver_id) ,
+            'reciver'=>['name'=>User::find($request->reciver_id)->name] ,
             'messages'=>MessagesResource::collection($messages) ,
             'pagination' => [
                 'current_page' => $messages->currentPage(),

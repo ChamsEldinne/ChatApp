@@ -6,8 +6,10 @@ import CntactContainerLoading from './CntactContainerLoading';
 import ContactContainer from './ContactContainer';
 import axiosClient from '../axiosClient';
 import SideBar from './SideBar';
+import LoadingSpiner from './LoadingSpiner';
+import ContactContainer2 from './ContactContainer2';
 
-function Contact({setDisplayedContact, displayChat,setDisplauChat}) {
+function Contact({setDisplayedContact, displayChat,setDisplauChat,setMessages }) {
     const [dispalySidBar,setDispalySideBar ]=useState(false) ;
     const [contact,setContact]=useState([]);
     const token=getToken() ;
@@ -19,7 +21,7 @@ function Contact({setDisplayedContact, displayChat,setDisplauChat}) {
 
     useEffect(()=>{
         const getMessanger= async()=>{
-            if( currentPage<=pagination.last_page){
+             if( currentPage<=pagination.last_page){
                 try{
                     setLoading(true)
                     const response= await axiosClient.get(`api/getMessanger?page=${currentPage}`,{
@@ -29,7 +31,7 @@ function Contact({setDisplayedContact, displayChat,setDisplauChat}) {
                     })
                     setContact([...contact,...response.data.data]) 
                     setPagination({last_page:response.data.last_page})
-
+                    setDisplayedContact({reciver_id:response.data.data[0].freinde_id,group_or_friend:1})
                 }catch(err){
                     window.alert(err) 
                 }finally{
@@ -40,19 +42,14 @@ function Contact({setDisplayedContact, displayChat,setDisplauChat}) {
         getMessanger() ;
     },[currentPage])
 
-    useEffect(() => {
-        const scrollableDiv=contactRef.current ;
-        const handleScroll = async() => {
+    const scrollableDiv=contactRef.current ;
+    const handleScroll =() => {
 
-            if (scrollableDiv.scrollHeight - scrollableDiv.scrollTop === scrollableDiv.clientHeight) {
-                setCurentPage(currentPage+1);
-            }
-        };
-    
-        scrollableDiv.addEventListener("scroll", handleScroll);
-    
-        return () => scrollableDiv.removeEventListener("scroll", handleScroll);
-    }, []);
+        if (scrollableDiv.scrollHeight - scrollableDiv.scrollTop === scrollableDiv.clientHeight) {
+            setCurentPage(currentPage+1);
+        }
+    };
+
 
   return (
     <section className={`${displayChat? "-left-[100vw]":"left-0"} bg-gray-900  h-full  md:left-0 overflow-y-auto  absolute md:relative top-0 z-10 md:flex flex-col flex-none w-full lg:max-w-sm md:w-2/5 transition-all duration-300 ease-in-out`}>     
@@ -91,9 +88,11 @@ function Contact({setDisplayedContact, displayChat,setDisplauChat}) {
         
             {[1,2,3,4].map(()=><ActiveUserContainerLoading/>)}
         </div>
-        <div ref={contactRef} className="contacts mb-4 h-fit p-2 flex-1 overflow-y-auto">   
-            {contact.map((cont,index)=><ContactContainer  key={index} setDisplauChat={setDisplauChat} setDisplayedContact={setDisplayedContact} cont={cont} />)}
-            {loading && [1,2,3,4,5,6].map(()=><CntactContainerLoading />) }
+        <div ref={contactRef} onScroll={()=>handleScroll()} className="contacts mb-4 h-fit p-2 flex-1 overflow-y-auto">   
+            {contact.map((cont,index)=><ContactContainer setMessages={setMessages}  key={index} setDisplauChat={setDisplauChat} setDisplayedContact={setDisplayedContact} cont={cont} />)}
+            {loading && currentPage==1 &&[1,2,3,4,5,6].map(()=><CntactContainerLoading />) }
+            {loading && currentPage>1 && <div className='flex w-full mb-8 justify-center' ><LoadingSpiner/></div>}
+            <ContactContainer2/>
         </div> 
     </section>
   )
