@@ -2,10 +2,11 @@ import {useState,useEffect} from 'react' ;
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 import axiosClient from "../axiosClient";
-
+import { getToken } from '../helpers';
 window.Pusher = Pusher;
 
 const useEcho=()=>{
+   const token=getToken() ;
    const [echoInstnce,setEchoInstance]=useState(null) ;
    useEffect(()=>{
     const echo = new Echo({
@@ -17,6 +18,11 @@ const useEcho=()=>{
               axiosClient.post('/api/broadcasting/auth', {
                 socket_id: socketId,
                 channel_name: channel.name
+              },{
+                headers:{
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                }
               })
               .then(response => {
                 callback(false, response.data);

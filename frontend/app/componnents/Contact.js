@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState,useEffect,useRef } from 'react'
-import { getToken } from '../helpers';
+import { getToken ,getUser} from '../helpers';
 import ActiveUserContainerLoading from './ActiveUserContainerLoading';
 import CntactContainerLoading from './CntactContainerLoading';
 import ContactContainer from './ContactContainer';
@@ -8,15 +8,29 @@ import axiosClient from '../axiosClient';
 import SideBar from './SideBar';
 import LoadingSpiner from './LoadingSpiner';
 import ContactContainer2 from './ContactContainer2';
+import useEcho from '../hookes/useEcho';
 
 function Contact({setDisplayedContact, displayChat,setDisplauChat,setMessages }) {
     const [dispalySidBar,setDispalySideBar ]=useState(false) ;
     const [contact,setContact]=useState([]);
     const token=getToken() ;
+    const user=getUser() ;
     const [loading,setLoading]=useState(true) ;
     const [pagination ,setPagination]=useState({last_page:1}) ;
     const [currentPage,setCurentPage]=useState(1) ;
     const contactRef=useRef()
+    
+    const echo=useEcho()
+ 
+    useEffect(()=>{
+        if(echo && user){
+            echo.private(`contact.${user.id}`)
+            .listen('MessageSentEvent', (event) => {
+               window.alert("message recive") ;
+            });
+        } 
+    },[echo])
+    
 
 
     useEffect(()=>{
@@ -52,7 +66,7 @@ function Contact({setDisplayedContact, displayChat,setDisplauChat,setMessages })
 
 
   return (
-    <section className={`${displayChat? "-left-[100vw]":"left-0"} bg-gray-900  h-full  md:left-0 overflow-y-auto  absolute md:relative top-0 z-10 md:flex flex-col flex-none w-full lg:max-w-sm md:w-2/5 transition-all duration-300 ease-in-out`}>     
+    <section className={`${displayChat? "-left-[100vw]":"left-0"} bg-gray-900  h-full  md:left-0 overflow-y-auto  absolute md:relative top-0 z-10 md:flex flex-col flex-none w-full lg:max-w-sm md:w-5/12 transition-al  duration-300 ease-in-out`}>     
         <div className="header z-10 p-4 flex flex-row justify-between items-center flex-none relative">
             <div className='cursor-pointer' onClick={()=>setDispalySideBar(!dispalySidBar)} title='plus'>
                 <svg width="24px" height="24px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15 1H1V3H15V1Z" fill="#2563eb"></path> <path d="M1 5H15V7H1V5Z" fill="#2563eb"></path> <path d="M15 9H1V11H15V9Z" fill="#2563eb"></path> <path d="M11 13H1V15H11V13Z" fill="#2563eb"></path> </g></svg>

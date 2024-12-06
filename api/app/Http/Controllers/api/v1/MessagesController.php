@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api\v1;
 
+use App\Events\MessageSentEvent;
 use App\Http\Resources\api\v1\MessagesResource;
 use App\Models\Message;
 use App\Http\Controllers\Controller;
@@ -61,7 +62,8 @@ class MessagesController extends Controller
                 'messageable_id' => $request->reciver_id
             ]);
            // sendMessageEvent::dispatch($message) ;
-            broadcast(new sendMessageEvent($message))   ;
+          //  broadcast(new sendMessageEvent($message))   ;
+          broadcast(new MessageSentEvent($message)) ;
             return new MessagesResource($message) ;
         }
 
