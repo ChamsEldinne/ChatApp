@@ -1,5 +1,5 @@
 <?php
-//use App\Models\User ;
+use App\Models\User ;
 use Illuminate\Support\Facades\Broadcast;
 
 
@@ -8,10 +8,20 @@ Broadcast::channel('chat.{id}', function ($user, $id) {
   return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('contact.{id}',function ($user, $id) {
+Broadcast::channel('contact.{id}', function ($user, $id) {
   return (int) $user->id === (int) $id;
 });
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
   return (int) $user->id === (int) $id;
 });
+
+Broadcast::channel('active-user', function (User $user) {
+
+  return [
+    'name' => $user->name, 
+    'id' => $user->id ,
+  ];
+});
+
+

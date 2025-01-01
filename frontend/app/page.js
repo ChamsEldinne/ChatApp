@@ -1,27 +1,50 @@
 'use client'
-import { useState } from 'react';
-import Chat from './componnents/Chat';
-import Contact from './componnents/Contact';
+import { useEffect } from 'react'
+import { getToken } from './helpers'
+import { useRouter } from 'next/navigation'
+import LoadingSpiner from './componnents/LoadingSpiner'
+import axiosClient from './axiosClient'
 
-export default function Home() {
+import React from 'react'
+function page() {
+  const router=useRouter()
+  const token=getToken() ;
 
-  const [displayedContact,setDisplayedContact]=useState(null) ;
-  const [displayChat,setDisplauChat]=useState(true) ;
-  const [messages,setMessages]=useState([]) ;
+  async function getUser(){
+    try{
+      const response=await axiosClient.get('/api/user',{
+        headers:{
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      console.log(response.data) ;
+      window.localStorage.setItem('user',JSON.stringify( response.data))
+      router.push('/chat')
+     }catch(err){
+      if(err.status==401){
+        router.push('/login')
+      }else{
+        window.alert(err) ;
+      }   
+     }
+  }
+  useEffect(()=>{
+    if(token==null){
+      router.push('/login')
+    }
+    getUser()
 
-   
-  return ( 
-    <div  className="h-[96vh] w-full flex antialiased text-gray-200 bg-gray-900  overflow-y-hidden">
-        <div className="flex-1 flex flex-col">
-            <main className="flex-grow flex flex-row min-h-0 relative">
-                <Contact setMessages={setMessages} setDisplayedContact={setDisplayedContact} displayChat={displayChat} setDisplauChat={setDisplauChat} />
-                <Chat messages={messages} setMessages={setMessages} displayedContact={displayedContact}  displayChat={displayChat} setDisplauChat={setDisplauChat} />
-            </main>
-        </div>
+  },[])
+
+  return (
+    <div className='grid place-items-center bg-gray-900 w-full h-[98vh]'>
+         <LoadingSpiner/>
     </div>
-  );
+  )
 }
 
+export default page
 
 
 

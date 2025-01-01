@@ -2,7 +2,7 @@ import React from 'react'
 
 function ActiveUserContainerLoading() {
   return (
-    <div className="text-sm text-center flex flex-col items-center  mr-4">
+    <div className="text-sm text-center flex flex-col items-center  mr-2">
         <div className="p-1 border-4 border-transparent rounded-full">
             <div className="w-16 bg-gray-400 animate-pulse rounded-full  h-16 relative flex flex-shrink-0">  
             <div className="absolute bg-gray-900 p-1 rounded-full bottom-0 right-0">

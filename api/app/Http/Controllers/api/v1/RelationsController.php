@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Relation ;
-class FrindShipController extends Controller
+class RelationsController extends Controller
 {
     public function addFriend(Request $request){
         $request->validate([
@@ -32,9 +32,7 @@ class FrindShipController extends Controller
             return response()->json(['sent before']) ;
         }
         $user->sendedUsers()->attach($request->user_id,['status'=>'not_confirm']);
-        $user->recivedUsers;
-        $user->sendedUsers ;
-        return response()->json(['user'=>$user] ) ;
+        return response()->json('Added' ) ;
     }
     public function cofirmFriend(Request $request,Relation $relation){
         
@@ -50,18 +48,22 @@ class FrindShipController extends Controller
     }
     public function freindes(){
         $user=Auth::user() ;
-        $freinds= DB::table('relation')
-        ->where('relationable_type','=','App\Models\User')
-        ->where(function ($query)use($user) {
-            $query->where('user_id', '=', $user->id) ;
-        })
-        ->orWhere(function ($query)use($user) {
-                 $query->where('relationable_id', '=', $user->id);
-        })
-        ->where('status','=','accpted')
-        ->get() ;
-        return $freinds ;
-       // return response()->json($user->freindes() ) ;
+        $freinds= DB::select("
+        SELECT users.id ,users.name ,relation_id
+        from users JOIN 
+        (  
+        SELECT   (CASE 
+            WHEN user_id = :user_id  THEN relationable_id
+            ELSE user_id
+        END) as freinde_id , relation.id as relation_id
+
+        from relation 
+        WHERE relationable_type='App\Models\User' and relation.status='accpted'
+        and (relation.user_id= :user_id or relation.relationable_id= :user_id))
+        on users.id=freinde_id ",
+        ['user_id'=>$user->id]) ;
+       
+        return response()->json($freinds)  ;
     }
 
     public function addGroup(Request $request){
@@ -98,5 +100,22 @@ class FrindShipController extends Controller
         }
         return response()->json(null,403) ;
     }
+
+    public function frindeRequest(){
+        $user=Auth::user() ;
+        $freinds= DB::select("
+        SELECT users.id ,users.name ,relation_id
+        from users JOIN 
+        (  
+        SELECT relation.relationable_id as freinde_id , relation.id as relation_id
+
+        from relation 
+        WHERE relationable_type='App\Models\User' and relation.status = 'not_confirm'
+        and (relation.user_id = :user_id))
+        on users.id=freinde_id ",
+        ['user_id'=>$user->id]) ;
+       
+        return response()->json($freinds)  ;
+    } 
 
 }

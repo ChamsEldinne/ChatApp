@@ -11,7 +11,7 @@ function page() {
     const router = useRouter();
   
     function handelChange(e){
-      setInput({...input ,[e.target.name]:e.target.value})
+      setInput({...input ,[e.target.id]:e.target.value})
       setErrors({name:null,email:null,password:null,password_confirmation:null})
     }
     async function register(e){
@@ -21,7 +21,7 @@ function page() {
         try {
           setLoading(true) ;
           const response =await axiosClient.post('/api/register', {
-            name: input.first_name,
+            name: input.name,
             email: input.email,
             password: input.password,
             password_confirmation: input.password_confirmation
@@ -34,7 +34,7 @@ function page() {
         } catch (error) {
             if(error.status ==422){
               const err=error.response.data.errors
-              setErrors({  name: err?.first_name,
+              setErrors({  name: err?.name,
                         password:err?.password,
                         email:err?.email,
                         password_confirmation:err?.password_confirmation

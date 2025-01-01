@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class GetMessanger extends Controller
 {
-    /**
-     * Handle the incoming request.
-     */
+    
     public function __invoke(Request $request)
     {
         $userId = Auth::user()->id;
@@ -56,7 +54,7 @@ class GetMessanger extends Controller
                 AND (messages.user_id = :user_id OR messages.messageable_id = :user_id)",
             ['user_id' => $userId]
         );
-       $total = $res[0]->freinde_count;
+      $total = $res[0]->freinde_count;
 
         $pagination = [
             'current_page' => $page,

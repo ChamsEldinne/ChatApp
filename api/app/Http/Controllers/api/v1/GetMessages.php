@@ -5,9 +5,10 @@ namespace App\Http\Controllers\api\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\api\v1\MessagesResource;
 use App\Models\Message;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB ;
+
 
 class GetMessages extends Controller
 {
@@ -32,10 +33,19 @@ class GetMessages extends Controller
                             ->where('user_id', $user->id);
             });
         })
-        ->orderBy('created_at', 'desc') // Replace 'id' with 'created_at' if you want to sort by the latest creation date
+        ->orderBy('created_at', 'desc') 
         ->paginate(20);
+        $reciver=DB::select("
+        SELECT users.id ,users.name ,personal_access_tokens.last_used_at ,
+            CASE 
+                WHEN personal_access_tokens.last_used_at > DATETIME('now', '-2 minutes') THEN 1
+                ELSE 0
+            END AS is_online
+        from users , personal_access_tokens 
+        where  personal_access_tokens.tokenable_id= :user_id and users.id= :user_id and personal_access_tokens.tokenable_type='App\Models\User' 
+        ",["user_id"=>$request->reciver_id]) ;
         return response()->json( [
-            'reciver'=>['name'=>User::find($request->reciver_id)->name] ,
+            'reciver'=>$reciver ,
             'messages'=>MessagesResource::collection($messages) ,
             'pagination' => [
                 'current_page' => $messages->currentPage(),

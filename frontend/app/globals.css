@@ -42,3 +42,17 @@
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+
+@keyframes large-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(40%); /* Increase this value for a bigger bounce */
+  }
+}
+
+.animate-large-bounce {
+  animation: large-bounce 0.6s infinite;
+}

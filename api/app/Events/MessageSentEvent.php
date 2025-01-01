@@ -45,7 +45,8 @@ class MessageSentEvent implements ShouldBroadcast
                 'message'=>$this->message->message,
                 'time'=>$this->message->created_at,
                 "user_id"=>$this->message->user_id ,
-                // 'reciv_or_sent'=>$this->message->user_id==$user->id? 1:0, //1 send ,0 reci
+                'reciv_or_sent'=>0, //1 send ,0 reci
+                "messageable_id"=>$this->message->messageable_id
             ]
         ];
     }

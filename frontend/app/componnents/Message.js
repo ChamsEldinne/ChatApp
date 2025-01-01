@@ -27,7 +27,6 @@ function Message({message,prev,next,setMessages}){
                     'Content-Type': 'application/json'
                 }             
             })
-           //console.log(response.data) ;
             setMessages((prev)=>prev.map((mes)=>message.id!==mes.id? mes:response.data.data))
         }catch(err){
            window.alert(err) 
@@ -40,7 +39,6 @@ function Message({message,prev,next,setMessages}){
         if (event.key === 'Enter') {
            updateMessage() 
         }else if(event.key === 'Esc'){
-            window.alert(event.key)
             setUpdate(false) ;
         }
     };
