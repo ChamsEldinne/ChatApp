@@ -1,6 +1,7 @@
 import localFont from "next/font/local";
 import "./globals.css";
-import axiosClient from "./axiosClient";
+// import axiosClient from "./axiosClient";
+import ThreeDotes from "./componnents/ThreeDotes";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -19,24 +20,22 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  async function fetchSession(){
-     const response=await axiosClient.get('/sanctum/csrf-cookie',{
-        headers:{
-          'Authorization': `Bearer 1|UH3dWYiDSvi82Lpfn5TZsjevLjW0KfNS99fJOoEYfb70a914`,
-        }
-     })
-  }
-  fetchSession()
+  // async function fetchSession(){
+  //   await axiosClient.get('/sanctum/csrf-cookie',{
+  //       headers:{
+  //         'Authorization': `Bearer 1|UH3dWYiDSvi82Lpfn5TZsjevLjW0KfNS99fJOoEYfb70a914`,
+  //       }
+  //    })
+  // }
+  // fetchSession()
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <div className="flex flex-col  bg-gray-900">
-          <div className="border-b-2 h-[4vh] overflow-hidden border-gray-800 p-2 flex flex-row z-20">
-                <div className="bg-red-600 w-3 h-3 rounded-full mr-2"></div>
-                <div className="bg-yellow-500 w-3 h-3 rounded-full mr-2"></div>
-                <div className="bg-green-500 w-3 h-3 rounded-full mr-2"></div>
-            </div> 
-            {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased  w-screen h-screen overflow-hidden`}>
+        <div className="flex flex-col  bg-gray-900 w-screen h-screen overflow-hidden">
+          <ThreeDotes />
+          <div className="h-[96vh]">
+           {children}
+          </div>
         </div>
       </body>
     </html>

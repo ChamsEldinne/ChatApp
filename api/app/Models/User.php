@@ -60,7 +60,8 @@ class User extends Authenticatable
     }
 
     public function groups(){
-        return $this->morphedByMany(Group::class,'relationable','relation')->withPivot('status') ;
+        return $this->morphedByMany(Group::class,'relationable','relation') ;
+      //  ->withPivot('status')
     }
 
     public function freindes(){

@@ -8,6 +8,7 @@ function page() {
     const [loading,setLoading]=useState(false)
     const [freindes,setFriends]=useState([])
     const token=getToken() ;
+    
     useEffect(()=>{
       const fetchData= async()=>{
         try{

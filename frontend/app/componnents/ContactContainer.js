@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react'
+import { useMemo ,memo } from 'react'
 
-function ContactContainer({cont,setDisplayedContact ,setDisplauChat,setMessages}) {
+const ContactContainer=memo (
+function ContactContainer ({cont=null,setDisplayedContact })  {
+  
     const randomNumber=useMemo(()=> Math.floor(Math.random() * (100 )) + 1,[])
-
 
     const formatter = new Intl.DateTimeFormat('en-US', {
         year: 'numeric',
@@ -15,11 +16,9 @@ function ContactContainer({cont,setDisplayedContact ,setDisplauChat,setMessages}
     });
 
   return (
+    cont==null ? null :
     <div onClick={()=>{
-            setDisplayedContact({reciver_id:cont.freinde_id,group_or_friend:1});
-            setDisplauChat(true) ;
-            setMessages([])
-        }}
+            setDisplayedContact({reciver_id:cont.freinde_id,group_or_friend:1})}}
         className="flex justify-between items-center p-3 cursor-pointer hover:bg-gray-800 rounded-lg relative">
         <div className="w-16 h-16 relative flex flex-shrink-0">
             <img className="shadow-md rounded-full w-full h-full object-cover"
@@ -33,10 +32,11 @@ function ContactContainer({cont,setDisplayedContact ,setDisplauChat,setMessages}
                 <div className="min-w-0">
                     <p className="truncate font-bold">{cont.message}</p>
                 </div>
-                <p className="ml-2 whitespace-no-wrap">{formatter.format(new Date(cont.lates_message_date)) } </p>
+                {/* <p className="ml-2 whitespace-no-wrap">{formatter.format(new Date(cont.lates_message_date)) } </p> */}
             </div>
         </div>
     </div>
   )
 }
+) ;
 export default ContactContainer

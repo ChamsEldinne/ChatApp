@@ -1,17 +1,17 @@
 'use client'
-import { useEffect ,useState} from 'react';
+// import { useEffect ,useState} from 'react';
 
 
 function Typing() {
 
 
-    const [audio] = useState(() => new Audio('/../public/audio/Keyboard.mp3')); // Initialize the audio instance
+    // const [audio] = useState(() => new Audio('/../public/audio/Keyboard.mp3')); // Initialize the audio instance
 
-    const handlePlayAudio = () => {
-      audio.play().catch((err) => {
-        console.error('Failed to play audio:', err);
-      });
-    };
+    // const handlePlayAudio = () => {
+    //   audio.play().catch((err) => {
+    //     console.error('Failed to play audio:', err);
+    //   });
+    // };
   
     return (
     <div className="my-2">
@@ -22,7 +22,7 @@ function Typing() {
                 alt=""
             />
           </div>
-          <div onClick={handlePlayAudio} className="messages text-sm text-gray-700 grid grid-flow-row gap-2">
+          <div className="messages text-sm text-gray-700 grid grid-flow-row gap-2">
            <audio src='/public/audio/Keyboard.mp3' autoPlay={true} >
                 Your browser does not support the audio element.
             </audio>

@@ -21,15 +21,17 @@ function Chat({displayChat ,setDisplauChat,messages,setMessages ,displayedContac
             setCurentPage(1) ;
         }
         try{
-            if(!loading && displayedContact!=null){
+            if(!loading && displayedContact){
                 setLoading(true)
-                const response = await axiosClient.get(`/api/getMessages?page=${currentPage}`, {
+                const url =`/api/messages/frinde?page=${currentPage}`
+              //  const url=`/api/messages/${displayChat.displayedContact.group_or_friend==1 ?"frinde":"group"}?page=${currentPage}`
+                const response = await axiosClient.get(url, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
                     params: {
-                        group_or_friend: displayedContact.group_or_friend, // 1 for friend, 0 for group
+                        // group_or_friend: displayedContact.group_or_friend, // 1 for friend, 0 for group
                         reciver_id: displayedContact.reciver_id,
                     }
                 });  
@@ -58,8 +60,8 @@ function Chat({displayChat ,setDisplauChat,messages,setMessages ,displayedContac
 
   return (
     displayedContact==null ?
-    <div className={`${displayChat?"flex ":"hidden"}   z-10 md:flex flex-col flex-auto bg-gray-900 border-l relative border-gray-800`} >
-         
+    <div className={`${displayChat?"flex ":"hidden"} w-full   z-10 flex justify-center items-center bg-gray-900 border-l relative border-gray-800`} >
+          <h1 className='text-xl text-center text-gray-200 font-semibold'>No Selected Contact !</h1>
     </div> :
     <section className={`${displayChat?"flex ":"hidden"}   z-10 md:flex flex-col flex-auto bg-gray-900 border-l relative border-gray-800`}>
         <div className='flex rounded-full hover:bg-gray-700 bg-gray-700 md:hidden justify-center items-center w-10 h-10 p-1 cursor-pointer' onClick={()=>setDisplauChat(false)}>

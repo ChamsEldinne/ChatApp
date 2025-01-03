@@ -7,10 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class GetMessanger extends Controller
+class Contact extends Controller
 {
     
-    public function __invoke(Request $request)
+    public function frindes(Request $request)
     {
         $userId = Auth::user()->id;
         $perPage = 10;
@@ -64,5 +64,41 @@ class GetMessanger extends Controller
             'data' => $results,
         ];
         return response()->json($pagination);
+    }
+
+
+
+
+    public function groups(Request $request){
+
+        $userId = Auth::user()->id;
+        $perPage = 10;
+        $page = request('page', 1); 
+        $offset = ($page - 1) * $perPage;
+
+        $groups=DB::select("
+        SELECT groups.*
+            from groups 
+            WHERE groups.id in (SELECT relation.relationable_id
+
+        from relation 
+        WHERE relation.user_id=:user_id and relation.relationable_type='App\Models\Group') 
+                   LIMIT :limit OFFSET :offset;
+        ", [
+            'user_id' => $userId,
+            'limit' => $perPage,
+            'offset' => $offset,
+        ]);
+
+        $total=3 ;
+        $pagination = [
+            'current_page' => $page,
+            'per_page' => $perPage,
+            'total' => $total,
+            'last_page' => ceil($total / $perPage),
+            'data' => $groups,
+        ];
+        return response()->json($pagination);
+        
     }
 }

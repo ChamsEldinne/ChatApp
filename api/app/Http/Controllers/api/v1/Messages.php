@@ -10,20 +10,22 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB ;
 
 
-class GetMessages extends Controller
+class Messages extends Controller
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request)
+    public function frinde(Request $request)
     {
         $request->validate([
-            'group_or_friend'=>['required','boolean'] ,//1 user,0 group 
             'reciver_id'=>['required'] ,
         ]);
         $user=Auth::user() ;
 
-        $messages = Message::where('messageable_type', $request->group_or_friend?'App\Models\User':"App\Models\Group")
+        $messages=collect() ;
+        $reciver=collect() ;
+
+        $messages = Message::where('messageable_type', '=','App\Models\User')
         ->where(function ($query)use($user,$request) {
             $query->where(function ($subQuery)use($user,$request) {
                 $subQuery->where('messageable_id', $user->id)
@@ -35,6 +37,7 @@ class GetMessages extends Controller
         })
         ->orderBy('created_at', 'desc') 
         ->paginate(20);
+
         $reciver=DB::select("
         SELECT users.id ,users.name ,personal_access_tokens.last_used_at ,
             CASE 
@@ -44,6 +47,7 @@ class GetMessages extends Controller
         from users , personal_access_tokens 
         where  personal_access_tokens.tokenable_id= :user_id and users.id= :user_id and personal_access_tokens.tokenable_type='App\Models\User' 
         ",["user_id"=>$request->reciver_id]) ;
+
         return response()->json( [
             'reciver'=>$reciver ,
             'messages'=>MessagesResource::collection($messages) ,
@@ -56,5 +60,51 @@ class GetMessages extends Controller
                 'prev_page_url' => $messages->previousPageUrl(),
             ],
         ]);  
+    }
+
+
+    public function group(Request $request){
+
+        $request->validate([
+            'reciver_id'=>['required'] ,
+        ]);
+
+        $messages=collect() ;
+        $reciver=collect() ;
+        
+        $messages=DB::table('messages')
+        ->join('users', function ($join) {
+            $join->on('users.id', '=', 'messages.user_id')
+                 ->where('messages.messageable_id', '=', 1)
+                 ->where('messages.messageable_type', '=', 'App\Models\Group');
+        })
+        ->select(
+            'messages.id',
+            'messages.messageable_id as group_id',
+            'messages.user_id as sender_id',
+            'users.name as sender_name' ,
+            'messages.created_at',
+            'messages.messageable_type'
+        )
+        ->paginate(20);
+
+        $reciver=DB::select("SELECT group.id ,group.name 
+        from groups as group
+        where group.id=:group_id",
+        ["group_id"=>$request->reciver_id]) ;
+
+        return response()->json( [
+            'reciver'=>$reciver ,
+            'messages'=>MessagesResource::collection($messages) ,
+            'pagination' => [
+                'current_page' => $messages->currentPage(),
+                'last_page' => $messages->lastPage(),
+                'per_page' => $messages->perPage(),
+                'total' => $messages->total(),
+                'next_page_url' => $messages->nextPageUrl(),
+                'prev_page_url' => $messages->previousPageUrl(),
+            ],
+        ]);
+
     }
 }

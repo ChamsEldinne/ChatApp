@@ -1,16 +1,12 @@
 'use client'
 import { useMemo } from "react";
 
-function ActiveUserContainer({user=null,setDisplayedContact,setDisplauChat,setMessages}){
+function ActiveUserContainer({user=null,setDisplayedContact}){
     const randomNumber=useMemo(()=> Math.floor(Math.random() * (100 )) + 1,[])
   
     return (
       <div className="text-sm text-center mr-2 cursor-pointer hover:opacity-80 transition-opacity"
-       onClick={()=>
-          {setDisplayedContact({reciver_id:user?.id,group_or_friend:1})
-          setDisplauChat(true) ;
-          setMessages([])
-          } }>
+       onClick={()=>{setDisplayedContact({reciver_id:user?.id,group_or_friend:1})} }>
         <div className="p-1 border-4 border-transparent rounded-full">
           <div className="w-16 h-16 relative flex flex-shrink-0">
             <img className="shadow-md rounded-full w-full h-full object-cover"

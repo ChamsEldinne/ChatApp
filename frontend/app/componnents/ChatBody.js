@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import { useCallback } from 'react'
 import {useEffect,useState } from 'react'
 import MessageContainer from './MessageContainer';
 import ChatLoading from './ChatLoading'
@@ -14,6 +14,7 @@ function ChatBody({setCurentPage,loading,currentPage,pagination ,setMessages,mes
 
    const [scrollToBottomn,setScrollToBottomn]=useState(false) ;
    const {blocks} = useBlocks(messages);
+
 
    const user=getUser() ;
 
@@ -48,26 +49,25 @@ function ChatBody({setCurentPage,loading,currentPage,pagination ,setMessages,mes
 
 
     function handleScrollToBottomn(){
-        if(chatBodyRef.current){
-            chatBodyRef.current.scrollTop=chatBodyRef.current.scrollHeight ;
-            setScrollToBottomn(false) ;
-        }
+      if(chatBodyRef.current){
+          chatBodyRef.current.scrollTop=chatBodyRef.current.scrollHeight ;
+          setScrollToBottomn(false) ;
+      }
     }
 
-
-   let echo=useEcho() ;
+    // const echo= useEcho() 
    
-    useEffect(()=>{
-        if(echo && user){
-          echo.private(`chat.${user.id}`) 
-            .listen('MessageSentEvent', (event) => {
-                if(event.message.user_id != user.id){
-                    setMessages((prev)=>[event.message , ...prev])
-                    setScrollToBottomn(true) ;
-                }
-            });
-        } 
-    },[echo])
+    // useEffect(()=>{
+    //     if(echo && user){
+    //       echo.private(`chat.${user.id}`) 
+    //         .listen('MessageSentEvent', (event) => {
+    //             if(event.message.user_id != user.id){
+    //                 setMessages((prev)=>[event.message , ...prev])
+    //                 setScrollToBottomn(true) ;
+    //             }
+    //         });
+    //     } 
+    // },[echo])
 
   return (
     <div ref={chatBodyRef}  className="chat-body scroll-smooth p-4 flex-1  z-10  overflow-y-scroll " >

@@ -49,7 +49,7 @@ function page() {
      
     };
   return (
- <div className='bg-gray-900 h-screen w-full  flex justify-center items-center'>
+ <div className='bg-gray-900 h-full w-full  flex justify-center items-center'>
     <form className="max-w-sm shadow-gray-800 shadow-xl min-w-96 bg-gray-900 p-4 rounded-md">
     <h1 className='text-gray-200 text-2xl mx-auto font-semibold my-4'>Create new account for free</h1>
     <p className="my-2 text-sm text-gray-300  ">

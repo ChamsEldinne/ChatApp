@@ -7,6 +7,8 @@ use App\Models\Group;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class GroupController extends Controller
 {
@@ -22,17 +24,26 @@ class GroupController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        
+    {       
         $request->validate([
             'name'=>['required','unique:groups,name'] ,
+            'members'=>['array'] ,
+            'members.*'=>['exists:users,id'] ,
         ]);
-       // return $request ;
+
         $group=Group::create([
             'name'=>$request->name ,
         ]) ;
         $user=Auth::user() ;
         $group->users()->attach($user, ['status' => 'admin']); 
+        
+        $data=[] ;
+        foreach($request->members as $userId){
+          $data[]=['user_id'=>$userId,'status'=>'accpted',
+          'relationable_type'=>'App\Models\Group',
+          'relationable_id'=>$group->id] ;
+        }
+        DB::table('relation')->insert($data) ;
 
         return new GroupResources($group)  ;
     }

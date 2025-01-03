@@ -5,7 +5,7 @@ import ActiveUserContainer from "./ActiveUserContainer";
 import axiosClient from "../axiosClient";
 import { getToken } from "../helpers";
 
-function ActiveUersContainer({setDisplayedContact,setDisplauChat,setMessages}) {
+function ActiveUersContainer({setDisplayedContact}) {
   const [data,setData]=useState([]) ;
   const [loading,setLoading]=useState(true)
   const token=getToken()  ;
@@ -32,7 +32,7 @@ function ActiveUersContainer({setDisplayedContact,setDisplauChat,setMessages}) {
       {loading && [1, 2, 3, 4,5,6,7].map((index) => (
         <ActiveUserContainerLoading key={index} />
       ))}
-      {data.map((user,index)=><ActiveUserContainer setDisplauChat={setDisplauChat} setMessages={setMessages} setDisplayedContact={setDisplayedContact} key={index} user={user} />)}
+      {data.map((user,index)=><ActiveUserContainer setDisplayedContact={setDisplayedContact} key={index} user={user} />)}
     </div>
   );
 }
