@@ -1,7 +1,9 @@
+import { getUser } from "../helpers"
 
 function GroupContactContainer({ setDisplayedContact, cont }) {
+    const user=getUser() ;
   return (
-    <div onClick={()=>{ setDisplayedContact({reciver_id:cont.id,group_or_friend:0} ) }}
+    <div onClick={()=>{ setDisplayedContact({reciver_id:cont.group_id,group_or_friend:0} ) }}
  className="flex justify-between items-center p-3 cursor-pointer hover:bg-gray-800 rounded-lg relative">
         <div className="w-16 h-16 relative flex flex-shrink-0">
             <img className="shadow-md rounded-full w-10 h-10 object-cover absolute ml-6"
@@ -16,14 +18,14 @@ function GroupContactContainer({ setDisplayedContact, cont }) {
                 <div className="bg-green-500 rounded-full w-3 h-3"></div>
             </div>
         </div>
-        <div className="flex-auto min-w-0 ml-4 mr-6 block">
-            <p>{cont.name}</p>
+        <div className="flex-auto min-w-0 ml-4 mr-0 block">
+            <p>{cont.group_name}</p>
             <div className="flex items-center text-sm text-gray-600">
                 <div className="min-w-0">
-                    <p className="truncate">Adam: Hurray, Version 2 is out now!!.
+                    <p className="truncate">{cont.user_id==user.id ? "You":cont.user_name}: {cont.message}
                     </p>
                 </div>
-                <p className="ml-2 whitespace-no-wrap">23 Jan</p>
+                <p className="ml-2 whitespace-no-wrap">{cont.lates_message_date}</p>
             </div>
         </div>
      </div>

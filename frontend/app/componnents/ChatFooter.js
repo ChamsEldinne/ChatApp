@@ -18,7 +18,7 @@ function ChatFooter({setMessages,displayedContact}) {
         if(displayedContact && !loadingOnMessageSending){
             try{
                 setLoadingOnMessageSending(true) ;
-                const url=`/api/sendeMessage/frinde`
+                const url=`/api/sendeMessage/${displayedContact.group_or_friend==1? "frinde":"group"} `
                 const response=await axiosClient.post(url,{
                     'message' : message,
                   //  'group_or_friend' :1, // 1 user ,0 group 

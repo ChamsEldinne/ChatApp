@@ -24,12 +24,12 @@ class ActiveFrindesController extends Controller
             from users JOIN
             (
             SELECT  (CASE 
-                        WHEN user_id = :user_id and relationable_type='App\Models\User' THEN relationable_id
+                        WHEN user_id = :user_id  THEN relationable_id
                         ELSE user_id
                     END) as frinde_id 
-
+                    
             from relation 
-            WHERE   (relation.user_id=  :user_id  or relation.relationable_id= :user_id ) ) join personal_access_tokens 
+            WHERE   (relation.user_id= :user_id or relation.relationable_id= :user_id ) and relation.status='accpted' and relationable_type='App\Models\User' ) join personal_access_tokens 
             on users.id=frinde_id and personal_access_tokens.tokenable_id=users.id and personal_access_tokens.tokenable_type='App\Models\User' 
             ORDER by  personal_access_tokens.last_used_at DESC",
         ['user_id'=>$user->id]) ;

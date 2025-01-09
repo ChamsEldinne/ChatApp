@@ -37,13 +37,13 @@ function Contact({setDisplayedContact, displayChat ,setDisplayCreateGroup }) {
     //     } 
     //  },[echo,contact])
     
-    // useEffect(()=>{
+    useEffect(()=>{
 
-    //   if(contact.length!=0){
-    //     setContact(()=>[]) ;
-    //   }
+      if(contact.length!=0){
+        setContact(()=>[]) ;
+      }
       
-    // },[frindesOrGroups])
+    },[frindesOrGroups])
 
     useEffect(()=>{
         const getContacts = async()=>{

@@ -55,6 +55,12 @@ function ChatBody({setCurentPage,loading,currentPage,pagination ,setMessages,mes
       }
     }
 
+    useEffect(()=>{
+      if(currentPage==1){
+        handleScrollToBottomn() ;
+      }
+    },[blocks])
+
     // const echo= useEcho() 
    
     // useEffect(()=>{

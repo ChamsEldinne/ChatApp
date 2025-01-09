@@ -1,4 +1,5 @@
 import { useMemo ,memo } from 'react'
+import { getUser } from '../helpers';
 
 const ContactContainer=memo (
 function ContactContainer ({cont=null,setDisplayedContact })  {
@@ -14,6 +15,7 @@ function ContactContainer ({cont=null,setDisplayedContact })  {
         second: '2-digit',
         hour12: false
     });
+    const user=getUser() ;
 
   return (
     cont==null ? null :
@@ -26,13 +28,13 @@ function ContactContainer ({cont=null,setDisplayedContact })  {
                     alt=""
             />
         </div>
-        <div className="flex-auto min-w-0 ml-4 mr-6 block">
+        <div className="flex-auto min-w-0 ml-4 mr-2 block">
             <p className={`font-bold`} >{cont.freinde_name}</p>
-            <div className="flex items-center justify-between text-sm text-gray-600">
+            <div className="flex items-center justify-between w-full text-sm text-gray-600">
                 <div className="min-w-0">
-                    <p className="truncate font-bold">{cont.message}</p>
+                    <p className="truncate font-bold">{cont.user_id=user.id ? `You :${cont.message}`:cont.message } </p>
                 </div>
-                {/* <p className="ml-2 whitespace-no-wrap">{formatter.format(new Date(cont.lates_message_date)) } </p> */}
+                 <p className="ml-2 whitespace-no-wrap">{formatter.format(new Date(cont.lates_message_date)) } </p> 
             </div>
         </div>
     </div>

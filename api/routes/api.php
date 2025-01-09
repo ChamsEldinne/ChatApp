@@ -8,7 +8,6 @@ use App\Http\Controllers\api\v1\MessagesController;
 use App\Http\Controllers\api\v1\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\api\v1\RelationsController;
 use App\Http\Controllers\api\v1\Contact ;
 
@@ -22,7 +21,7 @@ Route::post('/login',[AuthController::class,'login']) ;
 Route::post('/logout',[AuthController::class,'logout'])->middleware(['auth:sanctum']) ;
 
 
-Route::group(['middleware'=>['auth:sanctum']],function(){
+Route::group(['middleware'=>['auth:sanctum']],routes: function(){
 
 
     Route::apiResource('/group',GroupController::class) ;
@@ -35,11 +34,13 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::apiResource('/message',MessagesController::class)->except(['index','store']) ;
     
     Route::post('/sendeMessage/frinde',[MessagesController::class,'frinde']);
-    Route::post('/sendeMessage/group',[MessagesController::class,'group'])->middleware('acceptedInGroup') ;
+    Route::post('/sendeMessage/group',[MessagesController::class,'group'])->middleware('AcceptedInGroup') ;
 
 
     Route::get('/messages/frinde',[Messages::class,'frinde']) ;
-    Route::get('/messages/group',[Messages::class,'group'])->middleware('acceptedInGroup') ;
+    Route::get('/messages/group',[Messages::class,'group']) ;
+
+   // ->middleware('AcceptedInGroup') ;
 
     Route::get('/contact/frindes',[Contact::class,'frindes']) ;
     Route::get('/contact/groups',[Contact::class,'groups']) ;

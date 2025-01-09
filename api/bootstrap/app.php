@@ -16,7 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ['prefix' => 'api', 'middleware' => ['api', 'auth:sanctum']],
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'AcceptedInGroup'=>App\Http\Middleware\AcceptedInGroup::class ,
+        ]) ;
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

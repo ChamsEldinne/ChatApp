@@ -68,34 +68,40 @@ class Messages extends Controller
         $request->validate([
             'reciver_id'=>['required'] ,
         ]);
-
         $messages=collect() ;
         $reciver=collect() ;
+
+        
         
         $messages=DB::table('messages')
-        ->join('users', function ($join) {
+        ->join('users', function ($join)use($request) {
             $join->on('users.id', '=', 'messages.user_id')
-                 ->where('messages.messageable_id', '=', 1)
+                 ->where('messages.messageable_id', '=', $request->reciver_id)
                  ->where('messages.messageable_type', '=', 'App\Models\Group');
-        })
-        ->select(
-            'messages.id',
-            'messages.messageable_id as group_id',
-            'messages.user_id as sender_id',
-            'users.name as sender_name' ,
-            'messages.created_at',
-            'messages.messageable_type'
-        )
+        }) 
+       
+        // ->select(
+        //     'messages.id',
+        //     'messages.message',
+        //     'messages.messageable_id as group_id',
+        //     'messages.user_id ',
+        //     'users.name as user_name' ,
+        //     'messages.created_at',
+        //     'messages.messageable_type'
+        // )
         ->paginate(20);
 
-        $reciver=DB::select("SELECT group.id ,group.name 
-        from groups as group
-        where group.id=:group_id",
+     //  return $messages ;
+
+        $reciver=DB::select("SELECT groups.id , groups.name 
+        from groups 
+        where groups.id=:group_id",
         ["group_id"=>$request->reciver_id]) ;
 
         return response()->json( [
             'reciver'=>$reciver ,
             'messages'=>MessagesResource::collection($messages) ,
+            //'messages'=>$messages ,
             'pagination' => [
                 'current_page' => $messages->currentPage(),
                 'last_page' => $messages->lastPage(),
