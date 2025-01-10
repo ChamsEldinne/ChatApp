@@ -1,4 +1,5 @@
 import { useState,useEffect,useCallback } from "react"
+import { getDifrnecInMinuts, getUser } from "../helpers";
 
 export  const useBlocks=(messages)=> {
 
@@ -9,24 +10,27 @@ export  const useBlocks=(messages)=> {
 
     const f=useCallback(()=>{
       let i=0;
-      const data=messages ;
+      const user=getUser() ;
+      const data=messages.map((d)=> {
+         d['reciv_or_sent']= d.user_id==user.id?1:0
+         return d ;
+      }) ;
+      console.log(data)
       const b=[] ;
       while(i<data.length){
         let g=[];
         let j=0 ;
         g.push(data[i]) ;
         i++; 
+
         while(i<data.length && data[i].reciv_or_sent==g[j].reciv_or_sent){
-          const date1 = new Date(data[i-1].time);
-          const date2 = new Date(data[i].time);
-          const differenceInTime = date1.getTime() - date2.getTime();
-          const diffInMinutes = differenceInTime / (1000 * 60);
+
+          const diffInMinutes = getDifrnecInMinuts(data[i-1].time,data[i].time);
           if(diffInMinutes>=30){
              break ;
           }
           g.unshift(data[i])
-          i++; 
-          j++;
+          i++;  j++;
         }
         b.unshift(g) ;
       }

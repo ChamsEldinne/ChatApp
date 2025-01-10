@@ -25,6 +25,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
         Model::preventLazyLoading(!app()->isProduction());
-
+        
     }
 }

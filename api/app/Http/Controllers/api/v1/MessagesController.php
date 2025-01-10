@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api\v1;
 
+use App\Events\GroupMessageEvent;
 use App\Events\MessageSentEvent;
 use App\Http\Resources\api\v1\MessagesResource;
 use App\Models\Message;
@@ -50,7 +51,7 @@ class MessagesController extends Controller
                 'messageable_type' =>"App\Models\User" ,
                 'messageable_id' => $request->reciver_id
             ]);
-            broadcast(new MessageSentEvent($message)) ;
+            broadcast(new MessageSentEvent($message,$user->id)) ;
             return new MessagesResource($message) ;
         }
 
@@ -73,7 +74,7 @@ class MessagesController extends Controller
             'messageable_type' => $request->group_or_friend ? "App\Models\User" : 'App\Models\Group',
             'messageable_id' => $request->reciver_id
         ]);
-
+        broadcast(new GroupMessageEvent($message)) ;
         return new MessagesResource($message) ;
     }
 

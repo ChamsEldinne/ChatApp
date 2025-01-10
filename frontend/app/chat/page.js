@@ -8,14 +8,18 @@ export default function Home() {
 
   const [displayedContact,setDisplayedContact]=useState(null) ;
   const [displayChat,setDisplauChat]=useState(false) ;
-//  
+
+  const [currentPage,setCurentPage]=useState(1) ;
+  
+ 
   const [messages,setMessages]=useState([]) ;
   const [displayCreateGroup,setDisplayCreateGroup]=useState(false) ;
   
   useEffect(()=>{
    
-    setMessages([]) ;
+    setMessages(()=>[]) ;
     setDisplauChat(true) ;
+    setCurentPage(()=>1) ;
     
   },[displayedContact]) ;
 
@@ -32,7 +36,7 @@ export default function Home() {
         <div className="flex-1 flex flex-col">
             <main className="flex-grow flex flex-row min-h-0 relative">
                 <Contact setDisplayCreateGroup={setDisplayCreateGroup} setDisplayedContact={setDisplayedContact} displayChat={displayChat}  />
-                <Chat  messages={messages} setMessages={setMessages} displayedContact={displayedContact}
+                <Chat currentPage={currentPage} setCurentPage={setCurentPage}  messages={messages} setMessages={setMessages} displayedContact={displayedContact}
                                        displayChat={displayChat} setDisplauChat={setDisplauChat} />    
                 {displayCreateGroup && <CreateGroup displayCreateGroup={displayCreateGroup} setDisplayCreateGroup={setDisplayCreateGroup} />}    
             </main>     

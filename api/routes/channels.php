@@ -1,6 +1,7 @@
 <?php
 use App\Models\User ;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\DB ;
 
 
 
@@ -23,5 +24,18 @@ Broadcast::channel('active-user', function (User $user) {
     'id' => $user->id ,
   ];
 });
+
+Broadcast::channel('group.{id}',function($user,$id){
+    
+  $group=DB::select("SELECT relation.*
+  from relation 
+  WHERE relationable_id= :group_id and user_id= :user_id and relationable_type='App\Models\Group'
+  and (relation.status='admin' or relation.status='accpted') ",[
+      'group_id'=>$id,
+      'user_id'=>$user->id ,
+  ]) ;
+  return  count($group)==0 ; 
+
+}) ;
 
 

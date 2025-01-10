@@ -21,7 +21,6 @@ function ChatFooter({setMessages,displayedContact}) {
                 const url=`/api/sendeMessage/${displayedContact.group_or_friend==1? "frinde":"group"} `
                 const response=await axiosClient.post(url,{
                     'message' : message,
-                  //  'group_or_friend' :1, // 1 user ,0 group 
                     'reciver_id':displayedContact.reciver_id ,
                 },{
                     headers:{
@@ -31,7 +30,7 @@ function ChatFooter({setMessages,displayedContact}) {
                 })
 
                 setMessage("") ;
-                setMessages((prev)=> [response.data.data,...prev])
+               // setMessages((prev)=> [response.data.data,...prev])
             }catch(err){
                 if(err.status==422){
                    setError(true)

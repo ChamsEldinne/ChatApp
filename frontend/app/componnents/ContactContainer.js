@@ -1,5 +1,5 @@
 import { useMemo ,memo } from 'react'
-import { getUser } from '../helpers';
+import { getDifrnecInMinuts, getUser,formateMinutes } from '../helpers';
 
 const ContactContainer=memo (
 function ContactContainer ({cont=null,setDisplayedContact })  {
@@ -34,7 +34,7 @@ function ContactContainer ({cont=null,setDisplayedContact })  {
                 <div className="min-w-0">
                     <p className="truncate font-bold">{cont.user_id=user.id ? `You :${cont.message}`:cont.message } </p>
                 </div>
-                 <p className="ml-2 whitespace-no-wrap">{formatter.format(new Date(cont.lates_message_date)) } </p> 
+                 <p className="ml-2 whitespace-no-wrap">{formateMinutes( getDifrnecInMinuts( null,cont.lates_message_date)) } </p> 
             </div>
         </div>
     </div>

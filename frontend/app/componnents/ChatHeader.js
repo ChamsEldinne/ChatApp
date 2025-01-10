@@ -2,14 +2,20 @@ import React from 'react'
 import ReciverLoading from './ReciverLoading'
 import Reciver from './Reciver'
 
-function ChatHeader({reciverUser,reciverLoading}) {
+function ChatHeader({reciverUser,reciverLoading,setDisplauChat}) {
   return (
-    <div className="chat-header border-b-2 border-gray-800 px-6 py-4 flex flex-row flex-none justify-between items-center shadow">
-    {! reciverLoading ?
-        <Reciver reciverUser={reciverUser} />:<ReciverLoading />
-    }
-
+    <div className="chat-header border-b-2 border-gray-800 px-2 md:px-6 py-2 md:py-4 flex flex-row flex-none justify-between items-center shadow">
+        <div className='flex gap-2 items-center'>
+            <div className='flex rounded-full text-blue-500 hover:bg-gray-700 bg-gray-800 md:hidden justify-center items-center w-10 h-10 p-1 cursor-pointer' onClick={()=>setDisplauChat(false)}>
+                <svg width="24px" height="24px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="#2563eb" d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"></path><path fill="#2563eb" d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"></path></g></svg>
+            </div>
+            {! reciverLoading ?
+                <Reciver reciverUser={reciverUser} />:<ReciverLoading />
+            }
+        </div>
+       
     <div className="flex">
+        
         <a href="#" className="block rounded-full hover:bg-gray-700 bg-gray-800 w-10 h-10 p-2">
                 <svg viewBox="0 0 20 20" className="w-full h-full fill-current text-blue-500">
                     <path d="M11.1735916,16.8264084 C7.57463481,15.3079672 4.69203285,12.4253652 3.17359164,8.82640836 L5.29408795,6.70591205 C5.68612671,6.31387329 6,5.55641359 6,5.00922203 L6,0.990777969 C6,0.45097518 5.55237094,3.33066907e-16 5.00019251,3.33066907e-16 L1.65110039,3.33066907e-16 L1.00214643,8.96910337e-16 C0.448676237,1.13735153e-15 -1.05725384e-09,0.445916468 -7.33736e-10,1.00108627 C-7.33736e-10,1.00108627 -3.44283713e-14,1.97634814 -3.44283713e-14,3 C-3.44283713e-14,12.3888407 7.61115925,20 17,20 C18.0236519,20 18.9989137,20 18.9989137,20 C19.5517984,20 20,19.5565264 20,18.9978536 L20,18.3488996 L20,14.9998075 C20,14.4476291 19.5490248,14 19.009222,14 L14.990778,14 C14.4435864,14 13.6861267,14.3138733 13.2940879,14.7059121 L11.1735916,16.8264084 Z"/>

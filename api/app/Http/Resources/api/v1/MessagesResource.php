@@ -20,7 +20,7 @@ class MessagesResource extends JsonResource
             'id'=>$this->id ,
             'message'=>$this->message,
             'time'=>$this->created_at,
-            'reciv_or_sent'=>$this->user_id==$user->id? 1:0, //1 send ,0 reciv 
+           // 'reciv_or_sent'=>$this->user_id==$user->id? 1:0, //1 send ,0 reciv 
             'user_name'=>$this->name? $this->name:null,
             'user_id'=>$this->user_id ? $this->user_id:null
         ];

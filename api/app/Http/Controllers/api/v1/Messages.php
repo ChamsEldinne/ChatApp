@@ -91,7 +91,6 @@ class Messages extends Controller
         // )
         ->paginate(20);
 
-     //  return $messages ;
 
         $reciver=DB::select("SELECT groups.id , groups.name 
         from groups 
@@ -101,7 +100,6 @@ class Messages extends Controller
         return response()->json( [
             'reciver'=>$reciver ,
             'messages'=>MessagesResource::collection($messages) ,
-            //'messages'=>$messages ,
             'pagination' => [
                 'current_page' => $messages->currentPage(),
                 'last_page' => $messages->lastPage(),

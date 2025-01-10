@@ -1,3 +1,4 @@
+import { getDifrnecInMinuts } from "../helpers";
 import Message from "./Message";
 function MessageContainer({block=[],setMessages,prev}){  
 
@@ -14,16 +15,14 @@ function MessageContainer({block=[],setMessages,prev}){
   let diffInMinutes=0 ;
 
   if(prev!=null){
-    const date1 = new Date(block[0].time);
-    const date2 = new Date(prev[0].time);
-    const differenceInTime = date1.getTime() - date2.getTime();
-    diffInMinutes = differenceInTime / (1000 * 60);
-  }
 
+    diffInMinutes = getDifrnecInMinuts(block[0].time,prev[0].time);
+  }
+  
  
   return (
       <div className="my-2">
-       {diffInMinutes >=30 && <p className="p-4 text-center text-sm text-gray-500">{formatter.format(new Date(block[0].time)) }</p>}
+       {diffInMinutes >=30 && <p className="p-4 text-center text-sm text-gray-500">{formatter.format(new Date(  block[0].time)) }</p>}
         <div className={`flex flex-row ${block[0].reciv_or_sent?"justify-end":"justify-start"}`}>
           <div className={`${block[0].reciv_or_sent?'hidden':'flex'} w-8 h-8 relative  flex-shrink-0 mr-4`}>
             <img className="shadow-md rounded-full w-full h-full object-cover"

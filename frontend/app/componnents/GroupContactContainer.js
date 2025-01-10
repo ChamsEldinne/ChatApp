@@ -1,4 +1,5 @@
-import { getUser } from "../helpers"
+
+import { getDifrnecInMinuts, getUser,formateMinutes } from '../helpers';
 
 function GroupContactContainer({ setDisplayedContact, cont }) {
     const user=getUser() ;
@@ -20,12 +21,12 @@ function GroupContactContainer({ setDisplayedContact, cont }) {
         </div>
         <div className="flex-auto min-w-0 ml-4 mr-0 block">
             <p>{cont.group_name}</p>
-            <div className="flex items-center text-sm text-gray-600">
+            <div className="flex items-center w-full justify-between text-sm text-gray-600">
                 <div className="min-w-0">
                     <p className="truncate">{cont.user_id==user.id ? "You":cont.user_name}: {cont.message}
                     </p>
                 </div>
-                <p className="ml-2 whitespace-no-wrap">{cont.lates_message_date}</p>
+                <p className="ml-2 whitespace-no-wrap">{formateMinutes( getDifrnecInMinuts( null,   cont.lates_message_date ))}</p>
             </div>
         </div>
      </div>
