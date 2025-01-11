@@ -23,10 +23,13 @@ function GroupContactContainer({ setDisplayedContact, cont }) {
             <p>{cont.group_name}</p>
             <div className="flex items-center w-full justify-between text-sm text-gray-600">
                 <div className="min-w-0">
-                    <p className="truncate">{cont.user_id==user.id ? "You":cont.user_name}: {cont.message}
-                    </p>
+                    {cont.message!=null ? <p className="truncate">{cont.user_id==user.id ? "You":cont.user_name}: {cont.message}
+                    </p>:
+                    <p>
+                        Say welecom To the New Group
+                    </p> }
                 </div>
-                <p className="ml-2 whitespace-no-wrap">{formateMinutes( getDifrnecInMinuts( null,   cont.lates_message_date ))}</p>
+                {cont.lates_message_date!=null && <p className="ml-2 whitespace-no-wrap">{formateMinutes( getDifrnecInMinuts( null,   cont.lates_message_date ))}</p>}
             </div>
         </div>
      </div>

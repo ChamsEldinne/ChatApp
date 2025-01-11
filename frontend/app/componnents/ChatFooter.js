@@ -4,7 +4,7 @@ import React from 'react'
 import { getToken } from '../helpers';
 import axiosClient from '../axiosClient';
 
-function ChatFooter({setMessages,displayedContact}) {
+function ChatFooter({displayedContact,setIstyping}) {
 
     const [displayButtuns,setDisplyaButtuns]=useState(false)
     const [loadingOnMessageSending,setLoadingOnMessageSending]=useState(false)
@@ -28,9 +28,8 @@ function ChatFooter({setMessages,displayedContact}) {
                         'Content-Type': 'application/json'
                     }             
                 })
-
                 setMessage("") ;
-               // setMessages((prev)=> [response.data.data,...prev])
+                setIstyping(false) ;
             }catch(err){
                 if(err.status==422){
                    setError(true)
@@ -42,9 +41,11 @@ function ChatFooter({setMessages,displayedContact}) {
             }
         }
     }
+   
 
     function handleInputChange(e){
         setMessage(e.target.value) ;
+        setIstyping(()=>!e.target.value.length==0 ) ;
     }
 
     const handleKeyDown = (event) => {
@@ -86,9 +87,9 @@ function ChatFooter({setMessages,displayedContact}) {
             </button>
             <div className="relative flex-grow">
                 <label>
-                    <input onFocus={()=> {setDisplyaButtuns(false)}} 
+                    <input onFocus={()=> {setDisplyaButtuns(false) }} 
                     
-                    onBlur={()=>setDisplyaButtuns(true)} 
+                    onBlur={()=>{setDisplyaButtuns(true) ;setIstyping(false)} } 
                     className={`${error? "border-red-500":""} rounded-full py-2  pl-3 pr-10 w-full group border border-gray-800 focus:border-gray-700 bg-gray-800 focus:bg-gray-900 focus:outline-none text-gray-200 focus:shadow-md transition duration-300 ease-in`}
                         type="text" value={message} onChange={(e)=>handleInputChange(e) } placeholder="Aa"
                         onKeyDown={handleKeyDown}/>

@@ -32,7 +32,7 @@ function ContactContainer ({cont=null,setDisplayedContact })  {
             <p className={`font-bold`} >{cont.freinde_name}</p>
             <div className="flex items-center justify-between w-full text-sm text-gray-600">
                 <div className="min-w-0">
-                    <p className="truncate font-bold">{cont.user_id=user.id ? `You :${cont.message}`:cont.message } </p>
+                    <p className="truncate font-bold">{cont.user_id==user.id ? `You :${cont.message}`:cont.message } </p>
                 </div>
                  <p className="ml-2 whitespace-no-wrap">{formateMinutes( getDifrnecInMinuts( null,cont.lates_message_date)) } </p> 
             </div>

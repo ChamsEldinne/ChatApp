@@ -3,8 +3,6 @@ use App\Models\User ;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\DB ;
 
-
-
 Broadcast::channel('chat.{id}', function ($user, $id) {
   return (int) $user->id === (int) $id;
 });
@@ -13,19 +11,8 @@ Broadcast::channel('contact.{id}', function ($user, $id) {
   return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-  return (int) $user->id === (int) $id;
-});
 
-Broadcast::channel('active-user', function (User $user) {
-
-  return [
-    'name' => $user->name, 
-    'id' => $user->id ,
-  ];
-});
-
-Broadcast::channel('group.{id}',function($user,$id){
+Broadcast::channel('group.{id}',function(User $user,$id){
     
   $group=DB::select("SELECT relation.*
   from relation 
@@ -34,7 +21,8 @@ Broadcast::channel('group.{id}',function($user,$id){
       'group_id'=>$id,
       'user_id'=>$user->id ,
   ]) ;
-  return  count($group)==0 ; 
+
+  return  !count($group)==0  ; 
 
 }) ;
 

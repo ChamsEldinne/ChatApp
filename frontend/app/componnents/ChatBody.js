@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect } from 'react'
+import {useEffect, useState } from 'react'
 import MessageContainer from './MessageContainer';
 import ChatLoading from './ChatLoading'
 import LoadingSpiner from './LoadingSpiner';
@@ -11,11 +11,12 @@ import useEcho from '../hookes/useEcho';
 import Typing from './Typing';
 import useScrooll from '../hookes/useScrooll';
 
-function ChatBody({setCurentPage,loading,currentPage,pagination ,setMessages,messages,displayedContact,chatBodyRef}) {
+function ChatBody({ isTyping,setCurentPage,loading,currentPage,pagination ,setMessages,messages,displayedContact,chatBodyRef}) {
 
   const {blocks} = useBlocks(messages);
   const [scrollToBottomn,setScrollToBottomn]=useScrooll(chatBodyRef,setCurentPage,pagination,currentPage ) ;
   
+  const [requestedTyping,setRequestedTyping]=useState(false) ;
   const user=getUser() ;
 
   function handleScrollToBottomn(){
@@ -25,9 +26,13 @@ function ChatBody({setCurentPage,loading,currentPage,pagination ,setMessages,mes
     }
   }
 
+
   useEffect(()=>{
     if(currentPage==1){
       handleScrollToBottomn() ;
+    }
+    if(messages.length==0){
+      setScrollToBottomn(false) ;
     }
   },[blocks])
 
@@ -42,25 +47,47 @@ function ChatBody({setCurentPage,loading,currentPage,pagination ,setMessages,mes
       const event= (displayedContact.group_or_friend==1) ? 'MessageSentEvent':'GroupMessageEvent'
 
       channle.listen(event, (event) => {
-        // if(event.message.user_id != user.id){
-            setMessages((prev)=>[event.message , ...prev])
-            setScrollToBottomn(true) ;
-       // }
+
+        setMessages((prev)=>[event.message , ...prev])
+        setScrollToBottomn(true) ;
+      
+      });
+
+      channle
+      .listenForWhisper('typing', (e) => {
+        setRequestedTyping(e.isTyping);
+        handleScrollToBottomn() ;
       });
     } 
   },[echo])
 
+
+  useEffect(()=>{
+    if(echo){
+        
+      const channel= (displayedContact.group_or_friend==1) ? 
+                  `chat.${displayedContact.reciver_id}` :
+                  `group.${displayedContact.reciver_id}`
+       
+      echo.private(channel)
+      .whisper('typing', {
+          isTyping:isTyping
+      });
+    }
+  
+  },[isTyping,echo])
+
+
   return (
-    <div ref={chatBodyRef}  className="chat-body scroll-smooth p-4 flex-1  z-10  overflow-y-scroll " >
+  <div ref={chatBodyRef}  className="chat-body scroll-smooth p-4 flex-1 min-h-[70vh]  z-10  overflow-y-scroll " >
     {scrollToBottomn && <ArrowDown handleScrollToBottomn={handleScrollToBottomn} /> }
 
     {loading && currentPage==1 && <ChatLoading />}
     {loading && currentPage>1 && <div className='flex justify-center w-full my-3'><LoadingSpiner /> </div> }
 
-
     {blocks.map((b,index)=><MessageContainer prev={index==0 ?null : blocks[index-1]} setMessages={setMessages} key={index} block={b} />)}
-    <Typing />
-</div>
+    {requestedTyping ? <Typing />:<div className='size-4'></div> }
+  </div>
   )
 }
 

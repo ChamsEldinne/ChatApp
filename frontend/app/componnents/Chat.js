@@ -16,6 +16,8 @@ function Chat({displayChat ,setDisplauChat,messages,setMessages ,displayedContac
     const [reciverUser,setReciverUser]=useState({name:"",is_online:0});
     const [reciverLoading,setReciverLoading]=useState(true) ;
 
+    const [isTyping,setIstyping]=useState(false) ;
+
     const fetchMessages =async(c)=>{
         try{
             if(!loading && displayedContact){
@@ -71,9 +73,9 @@ function Chat({displayChat ,setDisplauChat,messages,setMessages ,displayedContac
       <NoSelectedContact displayChat={displayChat} /> :
     <section className={`${displayChat? "flex":"hidden" } z-10 md:flex flex-col flex-auto bg-gray-900 border-l relative border-gray-800`}>
 
-         <ChatHeader setDisplauChat={setDisplauChat} reciverUser={reciverUser} reciverLoading={reciverLoading} />
-         <ChatBody  chatBodyRef={chatBodyRef} displayedContact={displayedContact} messages={messages} pagination={pagination}  setCurentPage={setCurentPage} loading={loading} currentPage={currentPage} setMessages={setMessages}  />
-         <ChatFooter setMessages={setMessages} displayedContact={displayedContact} />
+         <ChatHeader displayedContact={displayedContact} setDisplauChat={setDisplauChat} reciverUser={reciverUser} reciverLoading={reciverLoading} />
+         <ChatBody isTyping={isTyping}  chatBodyRef={chatBodyRef} displayedContact={displayedContact} messages={messages} pagination={pagination}  setCurentPage={setCurentPage} loading={loading} currentPage={currentPage} setMessages={setMessages}  />
+         <ChatFooter setIstyping={setIstyping} setMessages={setMessages} displayedContact={displayedContact} />
     
     </section>
   )

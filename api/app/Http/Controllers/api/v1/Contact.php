@@ -78,24 +78,25 @@ class Contact extends Controller
         $offset = ($page - 1) * $perPage;
 
         $groups=DB::select("
-        SELECT messages.id ,messages.message ,
+        SELECT messages.id ,messages.message ,Max(messages.created_at) as lates_message_date,
         groups.name as group_name,groups.id as group_id ,
-        users.name as user_name ,users.id as user_id ,
-        Max(messages.created_at) as lates_message_date
+        users.name as user_name,users.id as user_id
 
-        from messages join groups join users 
-        on messageable_id=groups.id and messages.user_id=users.id 
+        from messages right join groups  
 
-        WHERE messages.messageable_type='App\Models\Group'
-         and messages.messageable_id in (
-            SELECT groups.id
+        on messages.messageable_id=groups.id and messages.messageable_type='App\Models\Group' 
+
+        left join users
+        on messages.user_id=users.id
+
+        where groups.id in (
+                SELECT groups.id
                         from groups 
                         WHERE groups.id in (SELECT relation.relationable_id
-                                                from relation 
-                                                WHERE relation.user_id=:user_id and 
-                                                relation.relationable_type='App\Models\Group') 
+                        from relation 
+                        WHERE relation.user_id= :user_id and relation.relationable_type='App\Models\Group'
+                                and relation.status in ('accpted','admin')) )
 
-            )
         GROUP by messageable_id
         ORDER BY messages.created_at DESC
         LIMIT :limit OFFSET :offset;

@@ -17,7 +17,14 @@ class GroupController extends Controller
      */
     public function index()
     {
-        return GroupResources::collection(Group::with(['admins','members'])->get()) ;
+        $user=Auth::user() ;
+        $groups=DB::select('SELECT groups.id ,groups.name
+                            from groups 
+                            WHERE groups.id not in (SELECT relation.relationable_id
+                                                    from relation 
+                                                    WHERE relation.user_id=:user_id and relation.relationable_type="App\Models\Group" ) '
+                        ,['user_id'=>$user->id]) ;
+        return response()->json($groups);
     }
 
     /**

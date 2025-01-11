@@ -34,9 +34,9 @@ function SidBar2({selctedRoute,setSlectedRoute}) {
 						<span className="flex-1 ml-3 whitespace-nowrap">Users</span>
 					</a>
 				</li>
-				<li className="cursor-not-allowed">
-					<a href="#"
-						className={`flex items-center p-2 text-base font-normal  rounded-lg text-gray-200  hover:bg-gray-700`}>
+				<li id='groups' className="" onClick={(e)=>setSlectedRoute(e.target.id)} >
+					<a href="/users/groups"
+						className={`flex items-center p-2 text-base font-normal  rounded-lg text-gray-200 ${selctedRoute=='groups' ?  "bg-gray-700":""}  hover:bg-gray-700`}>
 						<svg className="flex-shrink-0 w-6 h-6  transition duration-75 text-gray-400  group-hover:text-white"
 							fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
 							<path

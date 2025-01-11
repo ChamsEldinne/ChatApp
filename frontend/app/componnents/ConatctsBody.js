@@ -23,7 +23,7 @@ function ConatctsBody({contact,loading,currentPage,setCurentPage,setDisplayedCon
           
         {contact.length==0 && !loading && 
         <div className='w-full mt-6 grid place-items-center'>
-        <a href='/users' className='mx-auto font-semibold  cursor-pointer hover:text-blue-600 transition-colors'> +Add Frindes </a>
+          <a href='/users' className='mx-auto font-semibold  cursor-pointer hover:text-blue-600 transition-colors'> + Make new Relations   </a>
         </div> }
         {frindesOrGroups && contact.map((cont,index)=><ContactContainer   key={index}  setDisplayedContact={setDisplayedContact} cont={cont} />)}
     

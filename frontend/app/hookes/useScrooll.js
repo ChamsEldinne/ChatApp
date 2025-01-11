@@ -4,7 +4,6 @@ const useScrooll=(chatBodyRef,setCurentPage,pagination,currentPage)=>{
 
     const [lastScrollTop, setLastScrollTop] = useState(0);
     const [scrollToBottomn,setScrollToBottomn]=useState(false) ;
-    
       
     useEffect(() => {
         const div=chatBodyRef.current ;
