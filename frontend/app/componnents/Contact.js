@@ -6,7 +6,7 @@ import ActiveUersContainer from './ActiveUersContainer';
 import ContactHeaderSection from './ContactHeaderSection';
 import FrindeOrGroupHeader from './FrindeOrGroupHeader';
 import ConatctsBody from './ConatctsBody';
-
+import { cansolToken } from '../axiosClient';
 
 function Contact({setDisplayedContact, displayChat ,setDisplayCreateGroup }) {
     const [contact,setContact]=useState([]);
@@ -46,6 +46,8 @@ function Contact({setDisplayedContact, displayChat ,setDisplayCreateGroup }) {
     },[frindesOrGroups])
 
     useEffect(()=>{
+        //const cansolToken=axios.CancelToken.source() ;
+
         const getContacts = async()=>{
              if( currentPage<=pagination.last_page){
                 try{
@@ -70,6 +72,7 @@ function Contact({setDisplayedContact, displayChat ,setDisplayCreateGroup }) {
             }
         }
         getContacts() ;
+
     },[currentPage,frindesOrGroups])
 
   return (

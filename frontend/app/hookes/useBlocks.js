@@ -9,13 +9,15 @@ export  const useBlocks=(messages)=> {
     // sent or recived in the same time 
 
     const f=useCallback(()=>{
+      
+      console.log("block renderd")
+
       let i=0;
       const user=getUser() ;
       const data=messages.map((d)=> {
          d['reciv_or_sent']= d.user_id==user.id?1:0
          return d ;
       }) ;
-      console.log(data)
       const b=[] ;
       while(i<data.length){
         let g=[];

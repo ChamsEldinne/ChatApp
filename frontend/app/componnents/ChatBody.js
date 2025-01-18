@@ -28,6 +28,7 @@ function ChatBody({ isTyping,setCurentPage,loading,currentPage,pagination ,setMe
 
 
   useEffect(()=>{
+    
     if(currentPage==1){
       handleScrollToBottomn() ;
     }

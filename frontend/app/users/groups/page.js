@@ -2,7 +2,6 @@
 import { useState,useEffect } from 'react';
 import React from 'react'
 import { getToken } from '@/app/helpers';
-import FrindeContainer from '@/app/componnents/FrindeContainer';
 import axiosClient from '@/app/axiosClient';
 import GroupeContainer from '@/app/componnents/GroupeContainer';
 function page() {

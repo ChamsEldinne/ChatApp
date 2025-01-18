@@ -1,8 +1,12 @@
 'use client'
-import { useState,useEffect } from 'react';
+import { useState,useEffect, lazy } from 'react';
 import Chat from '@/app/componnents/Chat'
 import Contact from '@/app/componnents/Contact';
-import CreateGroup from '../componnents/CreateGroup';
+// import CreateGroup from '../componnents/CreateGroup';
+
+
+//implement lazy loading for the componnent that sould't load evry single time 
+const CreateGroup=lazy(()=>import('../componnents/CreateGroup'))
 
 export default function Home() {
 

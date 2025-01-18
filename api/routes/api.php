@@ -42,9 +42,7 @@ Route::group(['middleware'=>['auth:sanctum']],routes: function(){
 
 
     Route::get('/messages/frinde',[Messages::class,'frinde']) ;
-    Route::get('/messages/group',[Messages::class,'group']) ;
-
-   // ->middleware('AcceptedInGroup') ;
+    Route::get('/messages/group',[Messages::class,'group'])->middleware('AcceptedInGroup') ;
 
     Route::get('/contact/frindes',[Contact::class,'frindes']) ;
     Route::get('/contact/groups',[Contact::class,'groups']) ;
