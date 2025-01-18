@@ -11,10 +11,10 @@ import useEcho from '../hookes/useEcho';
 import Typing from './Typing';
 import useScrooll from '../hookes/useScrooll';
 
-function ChatBody({ isTyping,setCurentPage,loading,currentPage,pagination ,setMessages,messages,displayedContact,chatBodyRef}) {
+function ChatBody({ isTyping,setCurentPage,isFetchingNextPage,status,currentPage ,setMessages,messages,reciverUser,chatBodyRef}) {
 
   const {blocks} = useBlocks(messages);
-  const [scrollToBottomn,setScrollToBottomn]=useScrooll(chatBodyRef,setCurentPage,pagination,currentPage ) ;
+  const [scrollToBottomn,setScrollToBottomn]=useScrooll(chatBodyRef,setCurentPage ) ;
   
   const [requestedTyping,setRequestedTyping]=useState(false) ;
   const user=getUser() ;
@@ -41,11 +41,11 @@ function ChatBody({ isTyping,setCurentPage,loading,currentPage,pagination ,setMe
   
   useEffect(()=>{
     if(echo && user){
-      const channle =(displayedContact.group_or_friend==1) ?
+      const channle =(reciverUser.type=='user') ?
                     echo.private(`chat.${user.id}`) : 
-                    echo.private(`group.${displayedContact.reciver_id}`) ;
+                    echo.private(`group.${reciverUser.id}`) ;
 
-      const event= (displayedContact.group_or_friend==1) ? 'MessageSentEvent':'GroupMessageEvent'
+      const event= (reciverUser.type=='user' ) ? 'MessageSentEvent':'GroupMessageEvent'
 
       channle.listen(event, (event) => {
 
@@ -66,9 +66,9 @@ function ChatBody({ isTyping,setCurentPage,loading,currentPage,pagination ,setMe
   useEffect(()=>{
     if(echo){
         
-      const channel= (displayedContact.group_or_friend==1) ? 
-                  `chat.${displayedContact.reciver_id}` :
-                  `group.${displayedContact.reciver_id}`
+      const channel= (reciverUser.type=='user') ? 
+                  `chat.${reciverUser.id}` :
+                  `group.${reciverUser.id}`
        
       echo.private(channel)
       .whisper('typing', {
@@ -83,8 +83,8 @@ function ChatBody({ isTyping,setCurentPage,loading,currentPage,pagination ,setMe
   <div ref={chatBodyRef}  className="chat-body scroll-smooth p-4 flex-1 min-h-[70vh]  z-10  overflow-y-scroll " >
     {scrollToBottomn && <ArrowDown handleScrollToBottomn={handleScrollToBottomn} /> }
 
-    {loading && currentPage==1 && <ChatLoading />}
-    {loading && currentPage>1 && <div className='flex justify-center w-full my-3'><LoadingSpiner /> </div> }
+    {status==="loading" && <ChatLoading />}
+    {isFetchingNextPage && <div className='flex justify-center w-full my-3'><LoadingSpiner /> </div> }
 
     {blocks.map((b,index)=><MessageContainer prev={index==0 ?null : blocks[index-1]} setMessages={setMessages} key={index} block={b} />)}
     {requestedTyping ? <Typing />:<div className='size-4'></div> }

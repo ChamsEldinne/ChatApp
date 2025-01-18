@@ -1,14 +1,14 @@
-import { useState,useEffect,useCallback } from 'react'
+import { useState,useEffect } from 'react'
 import { getToken ,getUser} from '../helpers';
 import axiosClient from '../axiosClient';
-import useEcho from '../hookes/useEcho';
 import ActiveUersContainer from './ActiveUersContainer';
 import ContactHeaderSection from './ContactHeaderSection';
 import FrindeOrGroupHeader from './FrindeOrGroupHeader';
 import ConatctsBody from './ConatctsBody';
 import { cansolToken } from '../axiosClient';
+import { usePathname } from 'next/navigation';
 
-function Contact({setDisplayedContact, displayChat ,setDisplayCreateGroup }) {
+function Contact({setDisplayCreateGroup }) {
     const [contact,setContact]=useState([]);
     const token=getToken() ;
     const user=getUser() ;
@@ -17,25 +17,13 @@ function Contact({setDisplayedContact, displayChat ,setDisplayCreateGroup }) {
     const [currentPage,setCurentPage]=useState(1) ;
 
     const [frindesOrGroups,setFrindesOrGroups]=useState(true) ; //true =>frindes ,flase=>groups  
+    const pathname = usePathname()
 
-    // const echo = useEcho() ;
 
-    // useEffect(()=>{
-    //     if(echo && user){
-    //         echo.private(`contact.${user.id}`)
-    //         .listen('MessageSentEvent', (event) => {
-            
-    //             const freinde_id=event.message.user_id==user.id?event.message.messageable_id:event.message.user_id
-    //             let tab= contact.map((cont)=>
-    //                 cont.freinde_id==freinde_id ?
-    //                     {...cont,message:event.message.message,lates_message_date:event.message.time}: cont
-    //                 )
+    useEffect(()=>{
+      setFrindesOrGroups( pathname.split("/")[2]==='user'?true:false )
+    },[])
 
-    //              tab.sort( (a, b) =>new Date( b.lates_message_date) - new Date(a.lates_message_date) )
-    //              setContact(tab) ;
-    //         });
-    //     } 
-    //  },[echo,contact])
     
     useEffect(()=>{
 
@@ -52,7 +40,7 @@ function Contact({setDisplayedContact, displayChat ,setDisplayCreateGroup }) {
              if( currentPage<=pagination.last_page){
                 try{
                     setLoading(true)
-                    const url=`/api/contact/${frindesOrGroups?'frindes':'groups'}?page=${currentPage}`
+                    const url=`/api/contact/${frindesOrGroups==true ?'frindes':'groups'}?page=${currentPage}`
                     const response= await axiosClient.get(url,{
                         headers:{
                             'Authorization': `Bearer ${token}`,
@@ -76,14 +64,14 @@ function Contact({setDisplayedContact, displayChat ,setDisplayCreateGroup }) {
     },[currentPage,frindesOrGroups])
 
   return (
-    <section className={`${displayChat? "-left-[100vw]":"left-0"} bg-gray-900  md:left-0 overflow-y-auto  absolute md:relative top-0 z-10 md:flex flex-col flex-none w-full lg:max-w-sm md:w-5/12 transition-al  duration-300 ease-in-out`}>     
+    <section className={`left-0 bg-gray-900  md:left-0 overflow-y-auto  absolute md:relative top-0 z-10 md:flex flex-col flex-none w-full lg:max-w-sm md:w-5/12 transition-al  duration-300 ease-in-out`}>     
         
         <ContactHeaderSection setDisplayCreateGroup={setDisplayCreateGroup} />
      
         <FrindeOrGroupHeader setContact={setContact} frindesOrGroups={frindesOrGroups}  setFrindesOrGroups={setFrindesOrGroups} />
-        <ActiveUersContainer setDisplayedContact={setDisplayedContact}  />
+        <ActiveUersContainer   />
           
-        <ConatctsBody  contact={contact} loading={loading} currentPage={currentPage} setCurentPage={setCurentPage}  setDisplayedContact={setDisplayedContact} frindesOrGroups={frindesOrGroups}  />
+        <ConatctsBody  contact={contact} loading={loading} currentPage={currentPage} setCurentPage={setCurentPage}   frindesOrGroups={frindesOrGroups}  />
     
     </section>
   )

@@ -48,6 +48,8 @@ class Messages extends Controller
         where  personal_access_tokens.tokenable_id= :user_id and users.id= :user_id and personal_access_tokens.tokenable_type='App\Models\User' 
         ",["user_id"=>$request->reciver_id]) ;
 
+        $reciver[0]->type='user' ;
+        
         return response()->json( [
             'reciver'=>$reciver ,
             'messages'=>MessagesResource::collection($messages) ,
@@ -96,6 +98,8 @@ class Messages extends Controller
         from groups 
         where groups.id=:group_id",
         ["group_id"=>$request->reciver_id]) ;
+
+        $reciver[0]->type='group' ;
 
         return response()->json( [
             'reciver'=>$reciver ,

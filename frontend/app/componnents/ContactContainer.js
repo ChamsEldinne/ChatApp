@@ -19,8 +19,7 @@ function ContactContainer ({cont=null,setDisplayedContact })  {
 
   return (
     cont==null ? null :
-    <div onClick={()=>{
-            setDisplayedContact({reciver_id:cont.freinde_id,group_or_friend:1})}}
+    <a href={`/chat/user/${cont.freinde_id}`}
         className="flex justify-between items-center p-3 cursor-pointer hover:bg-gray-800 rounded-lg relative">
         <div className="w-16 h-16 relative flex flex-shrink-0">
             <img className="shadow-md rounded-full w-full h-full object-cover"
@@ -37,7 +36,7 @@ function ContactContainer ({cont=null,setDisplayedContact })  {
                  <p className="ml-2 whitespace-no-wrap">{formateMinutes( getDifrnecInMinuts( null,cont.lates_message_date)) } </p> 
             </div>
         </div>
-    </div>
+    </a>
   )
 }
 ) ;

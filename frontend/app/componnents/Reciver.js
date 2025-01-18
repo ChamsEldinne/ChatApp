@@ -1,11 +1,11 @@
 import React from 'react'
 import { formateMinutes, getDifrnecInMinuts } from "../helpers";
 
-function Reciver({reciverUser,displayedContact}) {
+function Reciver({reciverUser}) {
   return (
     <div className="flex">
       {
-        displayedContact.group_or_friend==1 ?
+        reciverUser.type='user' ?
       
         <div className="size-12 mr-4 relative flex flex-shrink-0">
             <img className="shadow-md rounded-full w-full h-full object-cover"
@@ -34,7 +34,7 @@ function Reciver({reciverUser,displayedContact}) {
       } 
         <div className="text-sm flex flex-col  justify-center">
             <p className="font-bold">{reciverUser?.name}</p>
-            {displayedContact.group_or_friend==1 && !reciverUser.is_online==1 && <p>Last Active {formateMinutes( getDifrnecInMinuts( null,reciverUser?.last_used_at) )} ago</p>}
+            {reciverUser.type=="group" && !reciverUser.is_online==1 && <p>Last Active {formateMinutes( getDifrnecInMinuts( null,reciverUser?.last_used_at) )} ago</p>}
         </div>
     </div>
   )

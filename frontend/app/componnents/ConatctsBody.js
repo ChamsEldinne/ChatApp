@@ -21,16 +21,16 @@ function ConatctsBody({contact,loading,currentPage,setCurentPage,setDisplayedCon
   return (
     <div ref={contactBodyRef} onScroll={()=>handleScroll()} className="contacts mb-4 h-fit p-2 flex-1 overflow-y-auto">   
           
-        {contact.length==0 && !loading && 
-        <div className='w-full mt-6 grid place-items-center'>
-          <a href='/users' className='mx-auto font-semibold  cursor-pointer hover:text-blue-600 transition-colors'> + Make new Relations   </a>
-        </div> }
-        {frindesOrGroups && contact.map((cont,index)=><ContactContainer   key={index}  setDisplayedContact={setDisplayedContact} cont={cont} />)}
-    
-        {!frindesOrGroups && contact.map((cont,index)=><GroupContactContainer   key={index}  setDisplayedContact={setDisplayedContact} cont={cont} />)}
+      {contact.length==0 && !loading && 
+      <div className='w-full mt-6 grid place-items-center'>
+        <a href='/users' className='mx-auto font-semibold  cursor-pointer hover:text-blue-600 transition-colors'> + Make new Relations   </a>
+      </div> }
+      {frindesOrGroups && contact.map((cont,index)=><ContactContainer   key={index}  cont={cont} />)}
+  
+      {!frindesOrGroups && contact.map((cont,index)=><GroupContactContainer   key={index}  cont={cont} />)}
 
-        {loading && currentPage==1 &&[1,2,3,4,5,6].map((i)=><CntactContainerLoading key={i} />) }
-        {loading && currentPage>1 && <div className='flex w-full mb-8 justify-center' ><LoadingSpiner/></div>}
+      {loading && currentPage==1 &&[1,2,3,4,5,6].map((i)=><CntactContainerLoading key={i} />) }
+      {loading && currentPage>1 && <div className='flex w-full mb-8 justify-center' ><LoadingSpiner/></div>}
 
 
     </div> 

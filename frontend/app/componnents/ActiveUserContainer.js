@@ -3,13 +3,11 @@ import { useMemo } from "react";
 import { formateMinutes, getDifrnecInMinuts } from "../helpers";
 
 
-// const ActiveUserContainer = memo(  
-function ActiveUserContainer ({user=null,setDisplayedContact}) {
+function ActiveUserContainer ({user=null,}) {
   const randomNumber=useMemo(()=> Math.floor(Math.random() * (100 )) + 1,[])
-  
+   
   return (
-    <div className="text-sm text-center mr-2 cursor-pointer hover:opacity-80 transition-opacity"
-      onClick={()=>{setDisplayedContact({reciver_id:user?.id,group_or_friend:1})} }>
+    <a href={`/chat/user/${user.id}`} className="text-sm text-center mr-2 cursor-pointer hover:opacity-80 transition-opacity">
       <div className="p-1 border-4 border-transparent rounded-full">
         <div className="w-16 h-16 relative flex flex-shrink-0">
           <img className="shadow-md rounded-full w-full h-full object-cover"
@@ -27,9 +25,8 @@ function ActiveUserContainer ({user=null,setDisplayedContact}) {
         </div>
       </div>
       <p>{user?.name}</p>
-      </div>
+    </a>
   )
 }
-//)
 
 export default ActiveUserContainer ;
