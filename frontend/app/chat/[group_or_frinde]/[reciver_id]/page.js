@@ -1,23 +1,24 @@
 'use client'
 import React from 'react'
-import ChatFooter from '@/app/componnents/ChatFooter'
-import ChatHeader from '@/app/componnents/ChatHeader'
-import ChatBody from '@/app/componnents/ChatBody'
-import { useState,useEffect,useRef } from 'react'
-import { getToken } from '@/app/helpers'
+import ChatFooter from '../../../componnents/ChatFooter'
+import ChatHeader from '../../../componnents/ChatHeader'
+import ChatBody from '../../../componnents/ChatBody'
+import { useState,useEffect } from 'react'
+import { getToken } from '../../../helpers'
 import { useInfiniteQuery } from '@tanstack/react-query';
-import axiosClient from '@/app/axiosClient'
+import axiosClient from '../../../axiosClient'
 
+import { checkForCircularReferences } from '../../../helpers'
 import { usePathname } from 'next/navigation'
+
 
 export default function Page() {
 
   const token=getToken() ;
   const [isTyping,setIstyping]=useState(false) ;
-  const [currentPage,setCurentPage]=useState(1) ;
-  const [reciverUser,setReciverUser]=useState({name:"",is_online:0,type:""});
-  const chatBodyRef=useRef() ;
+  const [reciverUser,setReciverUser]=useState({name:"",is_online:0});
 
+  const [currentPage,setCurentPage]=useState(1) ;
   const pathname = usePathname()
   const [urlParams,setUrlParams]=useState(null) ;
  
@@ -37,38 +38,40 @@ export default function Page() {
         params: {
           reciver_id:urlParams.id ,
         }
-    });  
+    })
     return response.data
   } 
 
   
   const {status,error,data,isFetchingNextPage,hasNextPage,fetchNextPage}=useInfiniteQuery({
-    queryKey:["chat",urlParams] ,
-    enabled:urlParams!=null ,
-    queryFn:()=>fetchMessages(currentPage) ,
-    getNextPageParam: ()=>currentPage+1
+    queryKey:["chat",pathname.split("/")[2],pathname.split("/")[3]] ,
+    enabled:!!urlParams ,
+    queryFn:({page=currentPage})=>fetchMessages(page) ,
+    getNextPageParam: () => currentPage+1,
   })
 
   useEffect(()=>{
-    if(data && currentPage<=data.pages[0].pagination.last_page){
+    if(data && currentPage>1 && currentPage<=data.pages[0].pagination.last_page){
       fetchNextPage() ;
     }
   },[currentPage])
 
-
   useEffect(()=>{
-    if(data){
-      setReciverUser(data.pages[0].reciver[0])
-    }
-  },[data])
+     if(data){
+      console.log( data.pages.flatMap(item => item.messages) )
+     }
+  },[])
+
+
+
   
   return (
       <section className={ `flex z-10 md:flex flex-col flex-auto bg-gray-900 border-l relative border-gray-800`}>
-          <ChatHeader  reciverUser={reciverUser} reciverLoading={false} />
-          <ChatBody isTyping={isTyping}  chatBodyRef={chatBodyRef} reciverUser={reciverUser} messages={data!=null ? data.pages.flatMap(item => item.messages) :[]}
-
-            setCurentPage={setCurentPage} status={status} isFetchingNextPage={isFetchingNextPage} currentPage={currentPage} setMessages={null}  />
-          <ChatFooter setIstyping={setIstyping} setMessages={null} reciverUser={reciverUser} />
+          <ChatHeader urlParams={urlParams}  reciverUser={reciverUser} reciverLoading={status=="pending"} />
+          <ChatBody isTyping={isTyping}  messages={data!=null ? data.pages.flatMap(item => item.messages) :[]}
+            urlParams={urlParams}
+            setCurentPage={setCurentPage} status={status} isFetchingNextPage={isFetchingNextPage} currentPage={currentPage}  />
+          <ChatFooter setIstyping={setIstyping}  urlParams={urlParams} />
      </section>
   )
 }

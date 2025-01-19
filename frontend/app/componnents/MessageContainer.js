@@ -1,6 +1,6 @@
 import { getDifrnecInMinuts } from "../helpers";
 import Message from "./Message";
-function MessageContainer({block=[],setMessages,prev}){  
+function MessageContainer({block=[],prev}){  
 
   const formatter = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -32,7 +32,7 @@ function MessageContainer({block=[],setMessages,prev}){
           </div>
           <div className="messages text-sm text-gray-700 grid grid-flow-row gap-2">
               {block[0].reciv_or_sent==0 &&  <h1 className="text-sm text-gray-400  -my-4 ">{block[0].user_name}</h1>}
-               {block.map((message,index)=><Message key={index} setMessages={setMessages} message={message} prev={index!=0} next={index<block.length-1}  />)}
+               {block.map((message,index)=><Message key={index} message={message} prev={index!=0} next={index<block.length-1}  />)}
           </div>
       </div>
     </div>

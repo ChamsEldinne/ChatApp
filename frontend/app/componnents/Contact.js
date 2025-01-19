@@ -7,12 +7,13 @@ import FrindeOrGroupHeader from './FrindeOrGroupHeader';
 import ConatctsBody from './ConatctsBody';
 import { cansolToken } from '../axiosClient';
 import { usePathname } from 'next/navigation';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 function Contact({setDisplayCreateGroup }) {
     const [contact,setContact]=useState([]);
     const token=getToken() ;
     const user=getUser() ;
-    const [loading,setLoading]=useState(true) ;
+    const [loading,setLoading]=useState(false) ;
     const [pagination ,setPagination]=useState({last_page:1}) ;
     const [currentPage,setCurentPage]=useState(1) ;
 
@@ -21,7 +22,7 @@ function Contact({setDisplayCreateGroup }) {
 
 
     useEffect(()=>{
-      setFrindesOrGroups( pathname.split("/")[2]==='user'?true:false )
+      setFrindesOrGroups( pathname.split("/")[2]==='group'?false:true)
     },[])
 
     
@@ -33,35 +34,23 @@ function Contact({setDisplayCreateGroup }) {
       
     },[frindesOrGroups])
 
-    useEffect(()=>{
-        //const cansolToken=axios.CancelToken.source() ;
+    const {status,error,data,isFetchingNextPage,hasNextPage,fetchNextPage}=useInfiniteQuery({
+      queryKey:['contact',frindesOrGroups] ,
+      queryFn :()=>getContacts(currentPage) ,
+      getNextPageParam: ()=>currentPage+1 ,
+    })
 
-        const getContacts = async()=>{
-             if( currentPage<=pagination.last_page){
-                try{
-                    setLoading(true)
-                    const url=`/api/contact/${frindesOrGroups==true ?'frindes':'groups'}?page=${currentPage}`
-                    const response= await axiosClient.get(url,{
-                        headers:{
-                            'Authorization': `Bearer ${token}`,
-                        }
-                    })
-                    setContact((prev)=> [...response.data.data]) 
-                    setPagination({last_page:response.data.last_page})
+    const getContacts = async(currentPage)=>{
 
-                  //  setDisplayedContact(response.data.data.length!=0 ? {reciver_id:response.data.data[0].freinde_id,group_or_friend:1} : null)
+      const url=`/api/contact/${frindesOrGroups==true ?'frindes':'groups'}?page=${currentPage}`
+      const response= await axiosClient.get(url,{
+      headers:{
+          'Authorization': `Bearer ${token}`,
+      }
+      })
+      return response.data ;
+    }
 
-                    
-                }catch(err){
-                    window.alert(err) 
-                }finally{
-                    setLoading(false)
-                }
-            }
-        }
-        getContacts() ;
-
-    },[currentPage,frindesOrGroups])
 
   return (
     <section className={`left-0 bg-gray-900  md:left-0 overflow-y-auto  absolute md:relative top-0 z-10 md:flex flex-col flex-none w-full lg:max-w-sm md:w-5/12 transition-al  duration-300 ease-in-out`}>     
@@ -71,7 +60,7 @@ function Contact({setDisplayCreateGroup }) {
         <FrindeOrGroupHeader setContact={setContact} frindesOrGroups={frindesOrGroups}  setFrindesOrGroups={setFrindesOrGroups} />
         <ActiveUersContainer   />
           
-        <ConatctsBody  contact={contact} loading={loading} currentPage={currentPage} setCurentPage={setCurentPage}   frindesOrGroups={frindesOrGroups}  />
+        <ConatctsBody  contact={data!=null ? data.pages.flatMap(item => item.data) :[]} loading={status=="pending"} currentPage={currentPage} setCurentPage={setCurentPage}   frindesOrGroups={frindesOrGroups}  />
     
     </section>
   )

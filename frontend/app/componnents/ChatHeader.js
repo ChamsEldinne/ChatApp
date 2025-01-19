@@ -2,15 +2,15 @@ import React from 'react'
 import ReciverLoading from './ReciverLoading'
 import Reciver from './Reciver'
 
-function ChatHeader({reciverUser,reciverLoading}) {
+function ChatHeader({reciverUser,reciverLoading,urlParams}) {
   return (
     <div className="chat-header border-b-2 border-gray-800 px-2 md:px-6 py-2 md:py-4 flex flex-row flex-none justify-between items-center shadow">
         <div className='flex gap-2 items-center'>
-            <div className='flex rounded-full text-blue-500 hover:bg-gray-700 bg-gray-800 md:hidden justify-center items-center w-10 h-10 p-1 cursor-pointer' onClick={()=>setDisplauChat(false)}>
+            <a href='/chat' className='flex rounded-full text-blue-500 hover:bg-gray-700 bg-gray-800 md:hidden justify-center items-center w-10 h-10 p-1 cursor-pointer' onClick={()=>setDisplauChat(false)}>
                 <svg width="24px" height="24px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="#2563eb" d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"></path><path fill="#2563eb" d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"></path></g></svg>
-            </div>
+            </a>
             {! reciverLoading ?
-                <Reciver reciverUser={reciverUser}  />:<ReciverLoading />
+                <Reciver reciverUser={reciverUser} urlParams={urlParams} />:<ReciverLoading />
             }
         </div>
        

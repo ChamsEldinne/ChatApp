@@ -4,7 +4,8 @@ import React from 'react'
 import { getToken } from '../helpers';
 import axiosClient from '../axiosClient';
 
-function ChatFooter({reciverUser,setIstyping}) {
+
+function ChatFooter({urlParams=null,setIstyping}) {
 
     const [displayButtuns,setDisplyaButtuns]=useState(false)
     const [loadingOnMessageSending,setLoadingOnMessageSending]=useState(false)
@@ -15,13 +16,13 @@ function ChatFooter({reciverUser,setIstyping}) {
     
     async function sendMessage(e){
         e.preventDefault()
-        if(reciverUser && !loadingOnMessageSending){
+        if(urlParams && !loadingOnMessageSending){
             try{
                 setLoadingOnMessageSending(true) ;
-                const url=`/api/sendeMessage/${reciverUser.type=='user'? "frinde":"group"} `
+                const url=`/api/sendeMessage/${urlParams.type=='user'? "frinde":"group"} `
                 const response=await axiosClient.post(url,{
                     'message' : message,
-                    'reciver_id':reciverUser.id ,
+                    'reciver_id':urlParams.id ,
                 },{
                     headers:{
                         'Authorization': `Bearer ${token}`,

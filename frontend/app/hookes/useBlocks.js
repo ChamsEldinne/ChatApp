@@ -29,7 +29,7 @@ export  const useBlocks=(messages)=> {
 
           const diffInMinutes = getDifrnecInMinuts(data[i-1].time,data[i].time);
           if(diffInMinutes>=30){
-             break ;
+            break ;
           }
           g.unshift(data[i])
           i++;  j++;

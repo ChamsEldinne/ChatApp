@@ -1,6 +1,7 @@
 import React from 'react'
 
 function NoSelectedContact() {
+  
   return (
     <div className={` flex w-full z-10  justify-center items-center bg-gray-900 border-l relative border-gray-800`} >
           <h1 className='text-xl text-center text-gray-200 font-semibold'>No Selected Contact !</h1>

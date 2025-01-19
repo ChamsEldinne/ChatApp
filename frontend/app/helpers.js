@@ -41,3 +41,13 @@ export const formateMinutes=(minutes)=>{
   }
   return null ;
 }
+
+export const checkForCircularReferences = (obj) => {
+  try {
+    JSON.stringify(obj);
+  } catch (error) {
+    if (error.message.includes('Converting circular structure to JSON')) {
+      console.error('Circular reference detected:', obj);
+    }
+  }
+};

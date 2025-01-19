@@ -1,13 +1,13 @@
 'use client'
 import { useMemo } from "react";
 import { formateMinutes, getDifrnecInMinuts } from "../helpers";
-
+import Link from "next/link";
 
 function ActiveUserContainer ({user=null,}) {
   const randomNumber=useMemo(()=> Math.floor(Math.random() * (100 )) + 1,[])
    
   return (
-    <a href={`/chat/user/${user.id}`} className="text-sm text-center mr-2 cursor-pointer hover:opacity-80 transition-opacity">
+    <Link href={`/chat/user/${user.id}`} className="text-sm text-center mr-2 cursor-pointer hover:opacity-80 transition-opacity">
       <div className="p-1 border-4 border-transparent rounded-full">
         <div className="w-16 h-16 relative flex flex-shrink-0">
           <img className="shadow-md rounded-full w-full h-full object-cover"
@@ -25,7 +25,7 @@ function ActiveUserContainer ({user=null,}) {
         </div>
       </div>
       <p>{user?.name}</p>
-    </a>
+    </Link>
   )
 }
 

@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useState } from 'react'
+import {useEffect, useState,useRef} from 'react'
 import MessageContainer from './MessageContainer';
 import ChatLoading from './ChatLoading'
 import LoadingSpiner from './LoadingSpiner';
@@ -10,16 +10,19 @@ import useBlocks from '../hookes/useBlocks';
 import useEcho from '../hookes/useEcho';
 import Typing from './Typing';
 import useScrooll from '../hookes/useScrooll';
+import { useQueryClient } from '@tanstack/react-query';
 
-function ChatBody({ isTyping,setCurentPage,isFetchingNextPage,status,currentPage ,setMessages,messages,reciverUser,chatBodyRef}) {
+function ChatBody({ urlParams,isTyping,setCurentPage,isFetchingNextPage,status,currentPage ,messages}) {
 
   const {blocks} = useBlocks(messages);
+  const chatBodyRef=useRef() ;
+
   const [scrollToBottomn,setScrollToBottomn]=useScrooll(chatBodyRef,setCurentPage ) ;
-  
+
   const [requestedTyping,setRequestedTyping]=useState(false) ;
   const user=getUser() ;
 
-  function handleScrollToBottomn(){
+  function ScrollToBottomn(){
     if(chatBodyRef.current){
       chatBodyRef.current.scrollTop=chatBodyRef.current.scrollHeight ;
       setScrollToBottomn(false) ;
@@ -30,7 +33,7 @@ function ChatBody({ isTyping,setCurentPage,isFetchingNextPage,status,currentPage
   useEffect(()=>{
     
     if(currentPage==1){
-      handleScrollToBottomn() ;
+      ScrollToBottomn() ;
     }
     if(messages.length==0){
       setScrollToBottomn(false) ;
@@ -38,18 +41,25 @@ function ChatBody({ isTyping,setCurentPage,isFetchingNextPage,status,currentPage
   },[blocks])
 
   const echo= useEcho() ;
+  const queryClient=useQueryClient() ;
   
   useEffect(()=>{
     if(echo && user){
-      const channle =(reciverUser.type=='user') ?
+      const channle =(urlParams.type=='user') ?
                     echo.private(`chat.${user.id}`) : 
-                    echo.private(`group.${reciverUser.id}`) ;
+                    echo.private(`group.${urlParams.id}`) ;
 
-      const event= (reciverUser.type=='user' ) ? 'MessageSentEvent':'GroupMessageEvent'
+      const event= (urlParams.type=='user' ) ? 'MessageSentEvent':'GroupMessageEvent'
 
       channle.listen(event, (event) => {
 
-        setMessages((prev)=>[event.message , ...prev])
+        queryClient.setQueryData(["chat",urlParams],(oldData) => {
+          const messages = oldData?.messages || []; // Ensure messages is an array.
+          return { ...oldData, messages: [event.message, ...messages] };
+        });
+
+        queryClient.invalidateQueries(["chat",urlParams])
+        // setMessages((prev)=>[event.message , ...prev])
         setScrollToBottomn(true) ;
       
       });
@@ -57,7 +67,7 @@ function ChatBody({ isTyping,setCurentPage,isFetchingNextPage,status,currentPage
       channle
       .listenForWhisper('typing', (e) => {
         setRequestedTyping(e.isTyping);
-        handleScrollToBottomn() ;
+        ScrollToBottomn() ;
       });
     } 
   },[echo])
@@ -66,9 +76,9 @@ function ChatBody({ isTyping,setCurentPage,isFetchingNextPage,status,currentPage
   useEffect(()=>{
     if(echo){
         
-      const channel= (reciverUser.type=='user') ? 
-                  `chat.${reciverUser.id}` :
-                  `group.${reciverUser.id}`
+      const channel= (urlParams.type=='user') ? 
+                  `chat.${urlParams.id}` :
+                  `group.${urlParams.id}`
        
       echo.private(channel)
       .whisper('typing', {
@@ -81,12 +91,12 @@ function ChatBody({ isTyping,setCurentPage,isFetchingNextPage,status,currentPage
 
   return (
   <div ref={chatBodyRef}  className="chat-body scroll-smooth p-4 flex-1 min-h-[70vh]  z-10  overflow-y-scroll " >
-    {scrollToBottomn && <ArrowDown handleScrollToBottomn={handleScrollToBottomn} /> }
+    {scrollToBottomn && <ArrowDown ScrollToBottomn={ScrollToBottomn} /> }
 
-    {status==="loading" && <ChatLoading />}
+    {status==="pending" && <ChatLoading />}
     {isFetchingNextPage && <div className='flex justify-center w-full my-3'><LoadingSpiner /> </div> }
 
-    {blocks.map((b,index)=><MessageContainer prev={index==0 ?null : blocks[index-1]} setMessages={setMessages} key={index} block={b} />)}
+    {blocks.map((b,index)=><MessageContainer prev={index==0 ?null : blocks[index-1]}  key={index} block={b} />)}
     {requestedTyping ? <Typing />:<div className='size-4'></div> }
   </div>
   )

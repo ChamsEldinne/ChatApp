@@ -2,7 +2,7 @@
 import axiosClient from "../axiosClient";
 import { getToken } from "../helpers";
 import { useState } from "react";
-function Message({message,prev,next,setMessages}){
+function Message({message,prev,next}){
     const token=getToken() 
 
     const formatter = new Intl.DateTimeFormat('en-US', {

@@ -1,10 +1,11 @@
 
 import { getDifrnecInMinuts, getUser,formateMinutes } from '../helpers';
+import Link from 'next/link';
 
 function GroupContactContainer({ cont }) {
   const user=getUser() ;
   return (
-    <a href={`/chat/group/${cont.group_id}`}
+    <Link href={`/chat/group/${cont.group_id}`}
        className="flex justify-between items-center p-3 cursor-pointer hover:bg-gray-800 rounded-lg relative">
         <div className="w-16 h-16 relative flex flex-shrink-0">
             <img className="shadow-md rounded-full w-10 h-10 object-cover absolute ml-6"
@@ -32,7 +33,7 @@ function GroupContactContainer({ cont }) {
                 {cont.lates_message_date!=null && <p className="ml-2 whitespace-no-wrap">{formateMinutes( getDifrnecInMinuts( null,   cont.lates_message_date ))}</p>}
             </div>
         </div>
-     </a>
+     </Link>
   )
 }
 
