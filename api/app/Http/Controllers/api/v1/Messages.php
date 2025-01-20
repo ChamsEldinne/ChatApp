@@ -91,6 +91,7 @@ class Messages extends Controller
         //     'messages.created_at',
         //     'messages.messageable_type'
         // )
+        ->orderBy('created_at', 'desc') 
         ->paginate(20);
 
 

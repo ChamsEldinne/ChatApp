@@ -1,6 +1,6 @@
 import {useState,useEffect} from 'react' ;
 
-const useScrooll=(chatBodyRef,setCurentPage)=>{
+const useScrooll=(chatBodyRef,fetchNextPage)=>{
 
     const [lastScrollTop, setLastScrollTop] = useState(0);
     const [scrollToBottomn,setScrollToBottomn]=useState(false) ;
@@ -21,7 +21,7 @@ const useScrooll=(chatBodyRef,setCurentPage)=>{
             } 
             // Check if the user reached the top of the body
             if (div.scrollTop === 0 ) {
-                setCurentPage((prev)=>prev+1) ;
+                fetchNextPage() ;
             }
             setLastScrollTop(currentScrollTop);
         };

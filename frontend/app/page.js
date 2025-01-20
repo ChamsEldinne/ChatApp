@@ -18,7 +18,6 @@ function page() {
           'Content-Type': 'application/json'
         }
       })
-      console.log(response.data) ;
       window.localStorage.setItem('user',JSON.stringify( response.data))
       router.push('/chat')
      }catch(err){

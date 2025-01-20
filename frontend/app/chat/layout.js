@@ -1,8 +1,10 @@
 'use client'
 import React from 'react'
 import { useState,useEffect } from 'react';
-import CreateGroup from '../componnents/CreateGroup';
 import Contact from '../componnents/Contact';
+import dynamic from 'next/dynamic';
+
+const CreateGroup=dynamic(() => import('../componnents/CreateGroup'))
 
 export default function ChatLayout({children}) {
   

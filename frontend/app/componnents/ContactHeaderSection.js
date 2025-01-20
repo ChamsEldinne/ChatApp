@@ -10,7 +10,7 @@ function ContactHeaderSection({setDisplayCreateGroup}) {
     useCloseDivONRandomClick(dispalySidBar,setDispalySideBar,sideBarRef) ;
 
     return (
-        <div className="header z-10 p-4  flex flex-row justify-between items-center flex-none relative">
+        <div className="header z-20 md:p-4 p-2 flex flex-row justify-between items-center flex-none relative">
             <div ref={sideBarRef} id='sideBar' className='cursor-pointer' >
                 <div className='p-2 hover:bg-gray-700 bg-gray-900 rounded-full'>
                   <svg onClick={()=>setDispalySideBar(!dispalySidBar)} title='plus' width="24px" height="24px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15 1H1V3H15V1Z" fill="#2563eb"></path> <path d="M1 5H15V7H1V5Z" fill="#2563eb"></path> <path d="M15 9H1V11H15V9Z" fill="#2563eb"></path> <path d="M11 13H1V15H11V13Z" fill="#2563eb"></path> </g></svg>

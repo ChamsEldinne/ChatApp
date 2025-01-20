@@ -5,7 +5,7 @@ function Reciver({reciverUser,urlParams}) {
   return (
     <div className="flex">
       {
-        urlParams.type='user' ?
+        urlParams.type=='user' ?
       
         <div className="size-12 mr-4 relative flex flex-shrink-0">
             <img className="shadow-md rounded-full w-full h-full object-cover"

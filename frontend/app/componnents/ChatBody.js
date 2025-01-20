@@ -12,12 +12,12 @@ import Typing from './Typing';
 import useScrooll from '../hookes/useScrooll';
 import { useQueryClient } from '@tanstack/react-query';
 
-function ChatBody({ urlParams,isTyping,setCurentPage,isFetchingNextPage,status,currentPage ,messages}) {
+function ChatBody({ fetchNextPage,urlParams,isTyping,isFetchingNextPage,status,messages}) {
 
   const {blocks} = useBlocks(messages);
   const chatBodyRef=useRef() ;
 
-  const [scrollToBottomn,setScrollToBottomn]=useScrooll(chatBodyRef,setCurentPage ) ;
+  const [scrollToBottomn,setScrollToBottomn]=useScrooll(chatBodyRef,fetchNextPage) ;
 
   const [requestedTyping,setRequestedTyping]=useState(false) ;
   const user=getUser() ;
@@ -32,9 +32,9 @@ function ChatBody({ urlParams,isTyping,setCurentPage,isFetchingNextPage,status,c
 
   useEffect(()=>{
     
-    if(currentPage==1){
-      ScrollToBottomn() ;
-    }
+    // if(currentPage==1){
+    //   ScrollToBottomn() ;
+    // }
     if(messages.length==0){
       setScrollToBottomn(false) ;
     }
@@ -58,14 +58,10 @@ function ChatBody({ urlParams,isTyping,setCurentPage,isFetchingNextPage,status,c
           return { ...oldData, messages: [event.message, ...messages] };
         });
 
-        queryClient.invalidateQueries(["chat",urlParams])
-        // setMessages((prev)=>[event.message , ...prev])
-        setScrollToBottomn(true) ;
-      
+        queryClient.invalidateQueries(["chat",urlParams])      
       });
 
-      channle
-      .listenForWhisper('typing', (e) => {
+      channle.listenForWhisper('typing', (e) => {
         setRequestedTyping(e.isTyping);
         ScrollToBottomn() ;
       });
@@ -88,6 +84,7 @@ function ChatBody({ urlParams,isTyping,setCurentPage,isFetchingNextPage,status,c
   
   },[isTyping,echo])
 
+ 
 
   return (
   <div ref={chatBodyRef}  className="chat-body scroll-smooth p-4 flex-1 min-h-[70vh]  z-10  overflow-y-scroll " >

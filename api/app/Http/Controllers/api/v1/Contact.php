@@ -13,7 +13,7 @@ class Contact extends Controller
     public function frindes(Request $request)
     {
         $userId = Auth::user()->id;
-        $perPage = 10;
+        $perPage = 12;
         $page = request('page', 1); 
         $offset = ($page - 1) * $perPage;
         $results = DB::select("
@@ -73,7 +73,7 @@ class Contact extends Controller
     public function groups(Request $request){
 
         $userId = Auth::user()->id;
-        $perPage = 10;
+        $perPage = 12;
         $page = request('page', 1); 
         $offset = ($page - 1) * $perPage;
 

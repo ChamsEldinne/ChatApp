@@ -10,8 +10,6 @@ export  const useBlocks=(messages)=> {
 
     const f=useCallback(()=>{
       
-      console.log("block renderd")
-
       let i=0;
       const user=getUser() ;
       const data=messages.map((d)=> {
@@ -31,12 +29,13 @@ export  const useBlocks=(messages)=> {
           if(diffInMinutes>=30){
             break ;
           }
-          g.unshift(data[i])
+          g.push(data[i])
           i++;  j++;
         }
-        b.unshift(g) ;
+        b.push(g.reverse()) ;
       }
-      setBlocks(b) ;
+
+      setBlocks(b.reverse() ) ;
     },[messages])
 
     

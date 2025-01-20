@@ -13,6 +13,7 @@ function ActiveUersContainer() {
   const {data,isLoading}=useQuery({
     queryKey:["activeFr"] ,
     queryFn:()=>fetchData() ,
+    staleTime:1000*60*2 ,//2min
   })
 
   const fetchData=async ()=>{
@@ -25,7 +26,7 @@ function ActiveUersContainer() {
     
   }  
   return (
-    <div className="active-users flex flex-row items-center p-2  overflow-auto w-0 min-w-full">
+    <div className="active-users flex flex-row items-center p-2 h-fit w-0 min-w-full">
       {isLoading && [1, 2, 3, 4,5,6,7].map((index) => (
         <ActiveUserContainerLoading key={index} />
       ))}

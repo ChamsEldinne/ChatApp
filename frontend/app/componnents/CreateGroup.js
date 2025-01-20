@@ -1,10 +1,11 @@
 'use client'
 import useCloseDivONRandomClick from '../hookes/useCloseDivONRandomClick';
 import FrindeConatiner2 from './FrindeConatiner2'
-import { useRef,useEffect,useState } from 'react'
+import { useRef,useState } from 'react'
 import axiosClient from '../axiosClient';
 import { getToken } from '../helpers';
 import LoadingSpiner from './LoadingSpiner';
+import { useQuery } from '@tanstack/react-query';
 
 function CreateGroup({displayCreateGroup,setDisplayCreateGroup}) {
 
@@ -12,37 +13,34 @@ function CreateGroup({displayCreateGroup,setDisplayCreateGroup}) {
 
   useCloseDivONRandomClick(displayCreateGroup,setDisplayCreateGroup,createGroupRef) ;
   const token=getToken() ;
-  const [freindes,setFriends]=useState([]) ;
   const [loading,setLoading]=useState(false) ;
   const [groupName,setGroupName]=useState('') ;
   const [err,setErr]=useState(null) ;
   const [newMemebers,setNewMemebers]=useState([]) ;
-  useEffect(()=>{
-    const fetchData= async()=>{
-      try{
-        setLoading(true)
-        const response=await axiosClient.get('/api/freindes',{
-          headers:{
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }) ;
-        setFriends(response.data)
-      }catch(err){
-        if(err.status==422){
-          setErr(err.data.message.name[0]) ;
-        }else{
-          window.alert(err.status) ;
-        } 
-      }finally{
-        setLoading(false)
-      }
-    }
-    fetchData()
-  },[]) ;
+
+  const fetchData= async()=>{
+
+      const response=await axiosClient.get('/api/freindes',{
+        headers:{
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }) ;
+      return response.data
+
+  }
+
+
+  const {data,isLoading}=useQuery({
+    queryFn:()=>fetchData() ,
+    queryKey:['frindes'] ,
+    staleTime:Infinity ,//time to cosider when the data is stale(old)
+    placeHolderData:[] ,
+  })
 
   async function CreateGroup(){
     try{
+      setLoading(true)
       const response=await axiosClient.post('/api/group',{
         name:groupName ,
         members:newMemebers ,
@@ -52,10 +50,12 @@ function CreateGroup({displayCreateGroup,setDisplayCreateGroup}) {
           'Content-Type': 'application/json'
         }
       })      
-      console.log(response.data) ;
+      setDisplayCreateGroup(false) ;
 
     }catch(err){
-       window.alert(err) ;
+      window.alert(err) ;
+    }finally{
+      setLoading(false) ;
     }
   }
 
@@ -67,7 +67,8 @@ function CreateGroup({displayCreateGroup,setDisplayCreateGroup}) {
               <label className='font-semibold' >Name Of The Group : </label>
               <div className='relative w-full h-fit'>
               <input value={groupName} onChange={(e)=>setGroupName(e.target.value)} type='text' className='bg-gray-800 outline-none p-2 w-full rounded-md' />
-              <button onClick={()=>CreateGroup()} className='p-1 rounded-md bg-blue-500 hover:bg-blue-700 absolute right-1 top-1/2 -translate-y-1/2 '>Submit</button>
+              <button onClick={()=>CreateGroup()} className='p-1 rounded-md bg-blue-500 hover:bg-blue-700 absolute right-1 top-1/2 -translate-y-1/2 '>{loading? <LoadingSpiner/>: "Submit"} </button>
+              
               </div>
               {err!=null && <p className='hidden text-red-500 w-full'>{err} </p>}
           </div>
@@ -75,10 +76,9 @@ function CreateGroup({displayCreateGroup,setDisplayCreateGroup}) {
           <div className=' w-full flex flex-col '>
             <h1 className='text-sm font-semibold px-2' >Add New Members From Your Frindes :</h1>
 
-             { freindes.map((user,index)=> <FrindeConatiner2 key={index} setNewMemebers={setNewMemebers} user={user} />)}
+            {data && data.map((user,index)=> <FrindeConatiner2 key={index} setNewMemebers={setNewMemebers} user={user} />)}
 
-             {loading && <LoadingSpiner/>}
-
+            {isLoading && <LoadingSpiner/>}
 
           </div>
       </div>
