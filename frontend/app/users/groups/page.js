@@ -1,9 +1,9 @@
 'use client'
 import { useState,useEffect } from 'react';
 import React from 'react'
-import { getToken } from '@/app/helpers';
-import axiosClient from '@/app/axiosClient';
-import GroupeContainer from '@/app/componnents/GroupeContainer';
+import { getToken } from '../../helpers';
+import axiosClient from '../../axiosClient';
+import GroupeContainer from '../../componnents/GroupeContainer';
 function page() {
     const [loading,setLoading]=useState(false)
     const [groups,setGroups]=useState([])

@@ -1,10 +1,12 @@
 'use client'
 import axiosClient from "../axiosClient";
 import { getToken } from "../helpers";
-import { useState } from "react";
-function Message({message,prev,next}){
-    const token=getToken() 
-
+import { useState ,useRef} from "react";
+import { useMutation,useQueryClient } from "@tanstack/react-query";
+import LoadingSpiner from "./LoadingSpiner";
+import useCloseDivONRandomClick from "../hookes/useCloseDivONRandomClick";
+function Message({message,prev,next,urlParams}){
+    const queryClient=useQueryClient() ;    
     const formatter = new Intl.DateTimeFormat('en-US', {
         // year: 'numeric',
         // month: 'short',
@@ -17,60 +19,77 @@ function Message({message,prev,next}){
     const [update,setUpdate]=useState(false) ;
     const [updateVlaue,setUpdateValue]=useState(message.message);
     const [displayList,setDisplayList]=useState(false) ;
+    const divRef=useRef() ;
+
+    useCloseDivONRandomClick(update,setUpdate,divRef) ;
+
+
     const updateMessage=async()=>{
-        try{
-            const response=await axiosClient.put(`/api/message/${message.id}`,{
-              'message' : updateVlaue,
-            },{
-                headers:{
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }             
-            })
-            setMessages((prev)=>prev.map((mes)=>message.id!==mes.id? mes:response.data.data))
-        }catch(err){
-           window.alert(err) 
-        }finally{
-            setUpdate(false) ;
-        }
+        const token=getToken() 
+        const response=await axiosClient.put(`/api/message/${message.id}`,{
+            'message' : updateVlaue,
+        },{
+            headers:{
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }             
+        })
+        return response ;
     }
+
+    const updateFn=useMutation({
+        mutationFn:updateMessage,
+        onSuccess:()=>{         
+            queryClient.invalidateQueries(['chat',urlParams] ,{exact:true})
+        }
+             
+    })
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
-           updateMessage() 
+            updateFn.mutate() 
+            setUpdate(false) ;
         }else if(event.key === 'Esc'){
             setUpdate(false) ;
         }
     };
 
     const deleteMessage=async ()=>{
-        try{
-            await axiosClient.delete(`/api/message/${message.id}`,{
-                headers:{
-                    'Authorization': `Bearer ${token}`,
-                }             
-            })
-            setMessages((prev)=>prev.filter((mes)=>message.id!==mes.id))
-        }catch(err){
-            window.alert(err)
-        }
+        const token=getToken() 
+        await axiosClient.delete(`/api/message/${message.id}`,{
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }             
+        })
     }
 
+    const deletFn=useMutation({
+        mutationFn:deleteMessage,
+        onSuccess:()=>{      
+            queryClient.invalidateQueries(['chat',urlParams],{exact:true})
+        }
+
+    })
+
     return (
-    <div className={`group flex flex-col  ${message.reciv_or_sent?"items-end":""}`}>
+    <div ref={divRef} className={`group flex flex-col  ${message.reciv_or_sent?"items-end":""}`}>
       <div className="flex items-center ">
         {
             update ? 
+            <div className="flex flex-col">
             <input  
             onKeyDown={handleKeyDown}
             value={updateVlaue}
             autoFocus={true}
             onChange={(e)=>setUpdateValue(e.target.value)}
             className={`px-6 py-3 rounded-full  max-w-xs lg:max-w-md border-gray-800 focus:border-gray-700 bg-gray-800  outline-none text-gray-200`} />          
+            <p>Press Enter To Update</p>
+            </div>
             :
             <p 
             className={`px-6 py-3 ${prev? "":"rounded-t-full"} ${next? "":"rounded-b-full"} ${message.reciv_or_sent?"rounded-l-full order-last bg-blue-500 ":"bg-gray-800  rounded-r-full " }  max-w-xs lg:max-w-md text-gray-200`}>
-            {message.message}
+           
+             {updateFn.isPending || deletFn.isPending ? <LoadingSpiner/> : message.message}
             </p>
         }
            
@@ -86,7 +105,7 @@ function Message({message,prev,next}){
                     </button>
                     <ul className={`${displayList? "flex":"hidden"} rounded-md z-10 p-1 absolute top-8 left-1/2 -translate-x-1/2 transition-all flex-col gap-1 bg-gray-800 text-gray-200  shadow-md `}>
                         <li onClick={()=>setUpdate(true)} className="py-2 px-3 rounded-md cursor-pointer hover:bg-gray-700 transition-colors hover:text-gary-100" >Edite</li>
-                        <li onClick={()=>deleteMessage()} className="py-2 px-3 rounded-md cursor-pointer hover:bg-gray-700 transition-colors hover:text-gary-100" >Delete</li>
+                        <li onClick={()=>deletFn.mutate()} className="py-2 px-3 rounded-md cursor-pointer hover:bg-gray-700 transition-colors hover:text-gary-100" >Delete</li>
                     </ul>
                 </div>
                 <button type="button" className="hidden group-hover:flex  flex-shrink-0 focus:outline-none mx-2  rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-700 bg-gray-800 w-8 h-8 p-2">

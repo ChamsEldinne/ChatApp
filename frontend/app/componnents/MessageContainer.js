@@ -1,6 +1,6 @@
 import { getDifrnecInMinuts } from "../helpers";
 import Message from "./Message";
-function MessageContainer({block=[],prev}){  
+function MessageContainer({block=[],prev=null,urlParams}){  
 
   const formatter = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -13,16 +13,13 @@ function MessageContainer({block=[],prev}){
   });
 
   let diffInMinutes=0 ;
-
   if(prev!=null){
-
     diffInMinutes = getDifrnecInMinuts(block[0].time,prev[0].time);
   }
   
- 
   return (
-      <div className="my-2">
-       {diffInMinutes >=30 && <p className="p-4 text-center text-sm text-gray-500">{formatter.format(new Date(  block[0].time)) }</p>}
+      <div className="my-3">
+       { (diffInMinutes >=30 || prev==null) && <p className="p-4 text-center text-sm text-gray-500">{formatter.format(new Date(  block[0].time)) }</p>}
         <div className={`flex flex-row ${block[0].reciv_or_sent?"justify-end":"justify-start"}`}>
           <div className={`${block[0].reciv_or_sent?'hidden':'flex'} w-8 h-8 relative  flex-shrink-0 mr-4`}>
             <img className="shadow-md rounded-full w-full h-full object-cover"
@@ -32,7 +29,7 @@ function MessageContainer({block=[],prev}){
           </div>
           <div className="messages text-sm text-gray-700 grid grid-flow-row gap-2">
               {block[0].reciv_or_sent==0 &&  <h1 className="text-sm text-gray-400  -my-4 ">{block[0].user_name}</h1>}
-               {block.map((message,index)=><Message key={index} message={message} prev={index!=0} next={index<block.length-1}  />)}
+               {block.map((message,index)=><Message urlParams={urlParams} key={message.id} message={message} prev={index!=0} next={index<block.length-1}  />)}
           </div>
       </div>
     </div>

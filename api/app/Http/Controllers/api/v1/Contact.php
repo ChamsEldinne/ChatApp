@@ -84,12 +84,8 @@ class Contact extends Controller
 
         from messages right join groups  
 
-        on messages.messageable_id=groups.id and messages.messageable_type='App\Models\Group' 
-
-        left join users
-        on messages.user_id=users.id
-
-        where groups.id in (
+        on messages.messageable_id=groups.id and messages.messageable_type='App\Models\Group' and 
+        groups.id in (
                 SELECT groups.id
                         from groups 
                         WHERE groups.id in (SELECT relation.relationable_id
@@ -97,7 +93,10 @@ class Contact extends Controller
                         WHERE relation.user_id= :user_id and relation.relationable_type='App\Models\Group'
                                 and relation.status in ('accpted','admin')) )
 
-        GROUP by messageable_id
+        left join users
+        on messages.user_id=users.id
+
+        GROUP by groups.id
         ORDER BY messages.created_at DESC
         LIMIT :limit OFFSET :offset;
         

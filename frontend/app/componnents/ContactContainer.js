@@ -1,21 +1,10 @@
-import { useMemo ,memo } from 'react'
+import { memo ,useMemo} from 'react'
 import { getDifrnecInMinuts, getUser,formateMinutes } from '../helpers';
 import Link from 'next/link';
 
-const ContactContainer=memo (
-function ContactContainer ({cont=null,setDisplayedContact })  {
+const ContactContainer=memo( ({cont=null})=>{
   
     const randomNumber=useMemo(()=> Math.floor(Math.random() * (100 )) + 1,[])
-
-    const formatter = new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-    });
     const user=getUser() ;
 
   return (
@@ -39,6 +28,5 @@ function ContactContainer ({cont=null,setDisplayedContact })  {
         </div>
     </Link>
   )
-}
-) ;
+});
 export default ContactContainer

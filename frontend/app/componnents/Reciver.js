@@ -1,11 +1,12 @@
 import React from 'react'
 import { formateMinutes, getDifrnecInMinuts } from "../helpers";
+import { memo } from 'react';
 
-function Reciver({reciverUser,urlParams}) {
+const Reciver=memo(({reciverUser=null})=> {
   return (
     <div className="flex">
       {
-        urlParams.type=='user' ?
+        reciverUser.type=='user' ?
       
         <div className="size-12 mr-4 relative flex flex-shrink-0">
             <img className="shadow-md rounded-full w-full h-full object-cover"
@@ -34,10 +35,10 @@ function Reciver({reciverUser,urlParams}) {
       } 
         <div className="text-sm flex flex-col  justify-center">
             <p className="font-bold">{reciverUser?.name}</p>
-            {urlParams.type=="group" && !reciverUser.is_online==1 && <p>Last Active {formateMinutes( getDifrnecInMinuts( null,reciverUser?.last_used_at) )} ago</p>}
+            {reciverUser.type !="group" && !reciverUser.is_online==1 && <p>Last Active {formateMinutes( getDifrnecInMinuts( null,reciverUser?.last_used_at) )} ago</p>}
         </div>
     </div>
   )
-}
+})
 
 export default Reciver

@@ -1,4 +1,4 @@
-
+import Link from "next/link"
 
 function SidBar2({selctedRoute,setSlectedRoute}) {
 
@@ -8,7 +8,7 @@ function SidBar2({selctedRoute,setSlectedRoute}) {
 		<div className="px-3 py-4 overflow-y-auto rounded  bg-gray-900">
 			<ul className="space-y-2">
 				<li onClick={(e)=>setSlectedRoute(e.target.id)}  id='frinderequest'>
-					<a href="/users/frinderequest"
+					<Link href="/users/frinderequest"
 						className={`flex items-center p-2 text-base font-normal  rounded-lg text-gray-200 ${selctedRoute=='frinderequest'? "bg-gray-700":"" } hover:bg-gray-700`}>
 						<svg className="flex-shrink-0 w-6 h-6  transition duration-75 text-gray-400  group-hover:text-white"
 							fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -21,10 +21,10 @@ function SidBar2({selctedRoute,setSlectedRoute}) {
 						</svg>
 						<span className="flex-1 ml-3 whitespace-nowrap">Frinde Request</span>
 						<span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium  rounded-full bg-blue-900 text-blue-200">3</span>
-					</a>
+					</Link >
 				</li>
 				<li id='users' onClick={(e)=>setSlectedRoute(e.target.id)}>
-					<a href="/users" 
+					<Link href="/users" 
 						className={`flex items-center p-2 text-base font-normal  rounded-lg text-gray-200 ${selctedRoute=='users'? "bg-gray-700":"" } hover:bg-gray-700`}>
 						<svg className="flex-shrink-0 w-6 h-6  transition duration-75 text-gray-400 group-hover:text-white"
 							fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -32,10 +32,10 @@ function SidBar2({selctedRoute,setSlectedRoute}) {
 								clip-rule="evenodd"></path>
 						</svg>
 						<span className="flex-1 ml-3 whitespace-nowrap">Users</span>
-					</a>
+					</Link >
 				</li>
 				<li id='groups' className="" onClick={(e)=>setSlectedRoute(e.target.id)} >
-					<a href="/users/groups"
+					<Link href="/users/groups"
 						className={`flex items-center p-2 text-base font-normal  rounded-lg text-gray-200 ${selctedRoute=='groups' ?  "bg-gray-700":""}  hover:bg-gray-700`}>
 						<svg className="flex-shrink-0 w-6 h-6  transition duration-75 text-gray-400  group-hover:text-white"
 							fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -45,10 +45,10 @@ function SidBar2({selctedRoute,setSlectedRoute}) {
 						</svg>
 						<span className="flex-1 ml-3 whitespace-nowrap">Groups</span>
 						<span className="inline-flex  items-center justify-center px-2 ml-3 text-sm font-medium  rounded-full bg-gray-700 text-gray-300">Pro</span>
-					</a>
+					</Link >
 				</li>
 				<li id='friends' onClick={(e)=>setSlectedRoute(e.target.id)}>
-					<a href="/users/friends"
+					<Link href="/users/friends"
 						className={`flex items-center p-2 text-base font-normal  rounded-lg text-gray-200 ${selctedRoute=='friends'? "bg-gray-700":"" } hover:bg-gray-700`}>
 						<svg className="flex-shrink-0 w-6 h-6  transition duration-75 text-gray-400  group-hover:text-white"
 							fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -57,10 +57,10 @@ function SidBar2({selctedRoute,setSlectedRoute}) {
 								clip-rule="evenodd"></path>
 						</svg>
 						<span className="flex-1 ml-3 whitespace-nowrap">Frindes</span>
-					</a>
+					</Link >
 				</li>
 				<li>
-					<a href="/chat"
+					<Link href="/chat"
 						className="flex items-center p-2 text-base font-normal  rounded-lg text-gray-200 hover:bg-gray-700">
 						<svg className="flex-shrink-0 w-6 h-6  transition duration-75 text-gray-400  group-hover:text-white"
 							fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -69,10 +69,10 @@ function SidBar2({selctedRoute,setSlectedRoute}) {
 								clip-rule="evenodd"></path>
 						</svg>
 						<span className="flex-1 ml-3 whitespace-nowrap">Go Chat</span>
-					</a>
+					</Link >
 				</li>
 				{/* <li>
-					<a href="#"
+					<Link href="#"
 						className="flex items-center p-2 text-base font-normal  rounded-lg text-gray-200 hover:bg-gray-700">
 						<svg className="flex-shrink-0 w-6 h-6  transition duration-75 text-gray-400  group-hover:text-white"
 							fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -81,7 +81,7 @@ function SidBar2({selctedRoute,setSlectedRoute}) {
 								clip-rule="evenodd"></path>
 						</svg>
 						<span className="flex-1 ml-3 whitespace-nowrap">Sign Up</span>
-					</a>
+					</Link >
 				</li> */}
 			</ul>
 		</div>

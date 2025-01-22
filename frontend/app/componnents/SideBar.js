@@ -2,6 +2,7 @@
 import { useRouter } from 'next/navigation';
 import { svgsRepo } from '../svgsRepo';
 import { useState } from 'react';
+import Link from 'next/link';
 function SideBar({setDisplayCreateGroup}) {
     const [displayList,setDisplayList]=useState(true) ;
 
@@ -20,12 +21,12 @@ function SideBar({setDisplayCreateGroup}) {
 		<div className="px-3 py-4 overflow-y-auto rounded  bg-gray-900">
 			<ul className="space-y-2">
 				<li>
-					<a href="#"
+					<Link href="#"
 						className="flex items-center p-2 text-base font-normal  rounded-lg text-gray-200 bg-gray-700 hover:bg-gray-700">
 						{svgsRepo.index}
 						<span className="flex-1 ml-3 whitespace-nowrap">Inbox</span>
 						<span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium  rounded-full bg-blue-900 text-blue-200">3</span>
-					</a>
+					</Link >
 				</li>
 				<li onClick={()=>openUsersList()}>
 					<div href="#"
@@ -55,25 +56,25 @@ function SideBar({setDisplayCreateGroup}) {
 					</ul>
 				</li>
 				<li>
-					<a href="#"
+					<Link href="#"
 						className="flex items-center p-2 text-base font-normal  rounded-lg text-gray-200 hover:bg-gray-700">
 						{svgsRepo.profile}
 						<span className="flex-1 ml-3 whitespace-nowrap">Profile</span>
-					</a>
+					</Link >
 				</li>
 				<li>
-					<a href="#"
+					<Link href="#"
 						className="flex items-center p-2 text-base font-normal  rounded-lg text-gray-200 hover:bg-gray-700">
 						{svgsRepo.logOut}
 						<span className="flex-1 ml-3 whitespace-nowrap">Loug out</span>
-					</a>
+					</Link >
 				</li>
 				{/* <li>
-					<a href="#"
+					<Link href="#"
 						className="flex items-center p-2 text-base font-normal  rounded-lg text-gray-200 hover:bg-gray-700">
 						
 						<span className="flex-1 ml-3 whitespace-nowrap">Sign Up</span>
-					</a>
+					</Link >
 				</li> */}
 			</ul>
 		</div>

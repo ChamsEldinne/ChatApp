@@ -11,8 +11,9 @@ import useEcho from '../hookes/useEcho';
 import Typing from './Typing';
 import useScrooll from '../hookes/useScrooll';
 import { useQueryClient } from '@tanstack/react-query';
+import Reciver2 from './Reciver2'
 
-function ChatBody({ fetchNextPage,urlParams,isTyping,isFetchingNextPage,status,messages}) {
+function ChatBody({ fetchNextPage,urlParams,isTyping,isFetchingNextPage,status,messages,reciver=null,isLoading}) {
 
   const {blocks} = useBlocks(messages);
   const chatBodyRef=useRef() ;
@@ -29,12 +30,7 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,isFetchingNextPage,status,m
     }
   }
 
-
   useEffect(()=>{
-    
-    // if(currentPage==1){
-    //   ScrollToBottomn() ;
-    // }
     if(messages.length==0){
       setScrollToBottomn(false) ;
     }
@@ -58,7 +54,7 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,isFetchingNextPage,status,m
           return { ...oldData, messages: [event.message, ...messages] };
         });
 
-        queryClient.invalidateQueries(["chat",urlParams])      
+        queryClient.invalidateQueries(["chat",urlParams],{exact:true});      
       });
 
       channle.listenForWhisper('typing', (e) => {
@@ -78,7 +74,7 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,isFetchingNextPage,status,m
        
       echo.private(channel)
       .whisper('typing', {
-          isTyping:isTyping
+        isTyping:isTyping
       });
     }
   
@@ -88,12 +84,15 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,isFetchingNextPage,status,m
 
   return (
   <div ref={chatBodyRef}  className="chat-body scroll-smooth p-4 flex-1 min-h-[70vh]  z-10  overflow-y-scroll " >
+   
+   {isLoading? <></>: <Reciver2 urlParams={urlParams} reciverUser={reciver} />}
+    
     {scrollToBottomn && <ArrowDown ScrollToBottomn={ScrollToBottomn} /> }
 
     {status==="pending" && <ChatLoading />}
     {isFetchingNextPage && <div className='flex justify-center w-full my-3'><LoadingSpiner /> </div> }
 
-    {blocks.map((b,index)=><MessageContainer prev={index==0 ?null : blocks[index-1]}  key={index} block={b} />)}
+    {blocks.map((b,index)=><MessageContainer prev={index==0 ?null : blocks[index-1]} urlParams={urlParams}  key={index} block={b} />)}
     {requestedTyping ? <Typing />:<div className='size-4'></div> }
   </div>
   )

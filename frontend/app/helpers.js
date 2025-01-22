@@ -30,7 +30,7 @@ export const getDifrnecInMinuts=(d1,d2)=>{
 
 
 export const formateMinutes=(minutes)=>{ 
-  if(minutes >60*20){   
+  if(minutes >60*24){   
     return `${Math.floor( minutes/(60*24) )}d` ;
   }else if (minutes > 60){
     return `${Math.floor( minutes/60)}h`

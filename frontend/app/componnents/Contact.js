@@ -5,7 +5,7 @@ import ActiveUersContainer from './ActiveUersContainer';
 import ContactHeaderSection from './ContactHeaderSection';
 import FrindeOrGroupHeader from './FrindeOrGroupHeader';
 import ConatctsBody from './ConatctsBody';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation'
 
 function Contact({setDisplayCreateGroup }) {
@@ -14,7 +14,7 @@ function Contact({setDisplayCreateGroup }) {
     const [frindesOrGroups,setFrindesOrGroups]=useState(pathname.split("/")[2]==='group'?false:true) ; //true =>frindes ,flase=>groups  
     const contactBodyRef=useRef()
 
-    const {status,error,data,isFetchingNextPage,hasNextPage,fetchNextPage}=useInfiniteQuery({
+    const {status,error,data,isFetchingNextPage,fetchNextPage}=useInfiniteQuery({
       queryKey:['contact',frindesOrGroups] ,
       queryFn :({pageParam })=>getContacts(pageParam ) ,
       initialPageParam: 1,

@@ -17,14 +17,12 @@ function ConatctsBody({contact,frindesOrGroups ,status, isFetchingNextPage}) {
         <Link href='/users' className='mx-auto font-semibold  cursor-pointer hover:text-blue-600 transition-colors'> + Make new Relations   </Link>
       </div> }
 
-      {frindesOrGroups && contact.map((cont,index)=><ContactContainer   key={index}  cont={cont} />)}
+      {frindesOrGroups && contact.map((cont)=><ContactContainer   key={cont.freinde_id}  cont={cont} />)}
   
-      {!frindesOrGroups && contact.map((cont,index)=><GroupContactContainer   key={index}  cont={cont} />)}
+      {!frindesOrGroups && contact.map((cont)=><GroupContactContainer   key={cont.group_id}  cont={cont} />)}
 
       {status=="pending" &&[1,2,3,4,5,6].map((i)=><CntactContainerLoading key={i} />) }
       {isFetchingNextPage && <div className='flex w-full mb-8 justify-center' ><LoadingSpiner/></div>}
-
-
     </div> 
   )
 }

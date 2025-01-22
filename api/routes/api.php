@@ -49,18 +49,6 @@ Route::group(['middleware'=>['auth:sanctum']],routes: function(){
 
     Route::get('/users',[UsersController::class,'index']) ;
     Route::get('/activeFrindes',ActiveFrindesController::class) ;
-
-    Route::get('/test',function(){
-        $user=Auth::user() ; 
-        $group=DB::select("SELECT relation.*
-        from relation 
-        WHERE relationable_id= :group_id and user_id= :user_id and relationable_type='App\Models\Group'
-        and (relation.status='admin' or relation.status='accpted') ",[
-            'group_id'=>6,
-            'user_id'=>$user->id ,
-        ]) ;
-
-        return response()->json( [$group ,'test'=>count($group)==0] );
-    }) ;
-
+    
+    Route::get('/messages/reciver',[Messages::class,'reciver']) ;
 });

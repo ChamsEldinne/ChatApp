@@ -1,9 +1,9 @@
 'use client'
 import { useState,useEffect } from 'react';
 import React from 'react'
-import { getToken } from '@/app/helpers';
-import FrindeContainer from '@/app/componnents/FrindeContainer';
-import axiosClient from '@/app/axiosClient';
+import { getToken } from '../../helpers';
+import FrindeContainer from '../../componnents/FrindeContainer';
+import axiosClient from '../../axiosClient';
 function page() {
     const [loading,setLoading]=useState(false)
     const [freindes,setFriends]=useState([])
