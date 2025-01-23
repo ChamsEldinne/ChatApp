@@ -40,7 +40,7 @@ function Message({message,prev,next,urlParams}){
     const updateFn=useMutation({
         mutationFn:updateMessage,
         onSuccess:()=>{         
-            queryClient.invalidateQueries(['chat',urlParams] ,{exact:true})
+            queryClient.invalidateQueries({queryKey:['chat',urlParams] ,exact:true})
         }
              
     })

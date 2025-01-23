@@ -13,7 +13,7 @@ import useScrooll from '../hookes/useScrooll';
 import { useQueryClient } from '@tanstack/react-query';
 import Reciver2 from './Reciver2'
 
-function ChatBody({ fetchNextPage,urlParams,isTyping,isFetchingNextPage,status,messages,reciver=null,isLoading}) {
+function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextPage,status,messages,reciver=null,isLoading}) {
 
   const {blocks} = useBlocks(messages);
   const chatBodyRef=useRef() ;
@@ -50,16 +50,24 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,isFetchingNextPage,status,m
       channle.listen(event, (event) => {
 
         queryClient.setQueryData(["chat",urlParams],(oldData) => {
-          const messages = oldData?.messages || []; // Ensure messages is an array.
-          return { ...oldData, messages: [event.message, ...messages] };
-        });
 
-        queryClient.invalidateQueries(["chat",urlParams],{exact:true});      
+          if (!oldData) return; 
+           
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page, index) =>
+              index === 0
+                ? { ...page, messages: [event.message, ...page.messages] } // Update only the first page
+                : page
+            ),
+          };
+
+        });
+        setScrollToBottomn(true)     
       });
 
       channle.listenForWhisper('typing', (e) => {
         setRequestedTyping(e.isTyping);
-        ScrollToBottomn() ;
       });
     } 
   },[echo])
@@ -85,7 +93,7 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,isFetchingNextPage,status,m
   return (
   <div ref={chatBodyRef}  className="chat-body scroll-smooth p-4 flex-1 min-h-[70vh]  z-10  overflow-y-scroll " >
    
-   {isLoading? <></>: <Reciver2 urlParams={urlParams} reciverUser={reciver} />}
+   {(!isLoading && !hasNextPage ) &&  <Reciver2 urlParams={urlParams} reciverUser={reciver} />}
     
     {scrollToBottomn && <ArrowDown ScrollToBottomn={ScrollToBottomn} /> }
 

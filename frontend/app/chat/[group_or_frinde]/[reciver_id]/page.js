@@ -37,7 +37,7 @@ export default function Page() {
     return response.data
   }
   
-  const {status,error,data,isFetchingNextPage,fetchNextPage}=useInfiniteQuery({
+  const {status,error,data,isFetchingNextPage,fetchNextPage,hasNextPage}=useInfiniteQuery({
     queryKey:["chat",urlParams] ,
     queryFn:({pageParam })=>fetchMessages(pageParam ) ,
     initialPageParam: 1,
@@ -75,7 +75,7 @@ export default function Page() {
       <section className={ `flex z-10 md:flex flex-col flex-auto bg-gray-900 border-l relative border-gray-800`}>
         <ChatHeader isLoading={reciver.isLoading} reciver={ reciver.data ? reciver.data.reciver[0]:null} />
         <ChatBody isLoading={reciver.isLoading} reciver={ reciver.data ? reciver.data.reciver[0]:null}
-          fetchNextPage={fetchNextPage} isTyping={isTyping} 
+          fetchNextPage={fetchNextPage} isTyping={isTyping} hasNextPage={hasNextPage}
           messages={data!=null ? data.pages.flatMap(item => item.messages) :[]}
            urlParams={urlParams} status={status} isFetchingNextPage={isFetchingNextPage}   />
         <ChatFooter setIstyping={setIstyping}  urlParams={urlParams} />

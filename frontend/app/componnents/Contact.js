@@ -47,7 +47,7 @@ function Contact({setDisplayCreateGroup }) {
     };
 
   return (
-    <section ref={contactBodyRef} onScroll={()=>handleScroll()} className={`${pathname.split("/").length>2 && window.matchMedia("(max-width: 767px)").matches ? "hidden":"" }  bg-gray-900  h-full overflow-x-hidden overflow-y-auto relative top-0 z-10 flex flex-col flex-none w-full lg:max-w-sm md:w-5/12 transition-al  duration-300 ease-in-out`}>     
+    <section ref={contactBodyRef} onScroll={()=>handleScroll()} className={`${pathname.split("/").length>2 && window.matchMedia("(max-width: 767px)").matches ? "hidden":"" } overflow-y-auto bg-gray-900  h-full overflow-x-hidden relative top-0 z-10 flex flex-col flex-none w-full lg:max-w-sm md:w-5/12 transition-al  duration-300 ease-in-out`}>     
       <ContactHeaderSection setDisplayCreateGroup={setDisplayCreateGroup} />
       <FrindeOrGroupHeader  frindesOrGroups={frindesOrGroups}  setFrindesOrGroups={setFrindesOrGroups} />
       <ActiveUersContainer   />    

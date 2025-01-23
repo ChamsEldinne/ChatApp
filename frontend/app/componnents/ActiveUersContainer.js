@@ -6,18 +6,17 @@ import { getToken } from "../helpers";
 import {memo} from 'react'
 import { useQuery } from "@tanstack/react-query";
 
-import { useQueryClient } from "@tanstack/react-query";
 const ActiveUersContainer=memo (()=>{
-  const queryClient=useQueryClient() ;
+
   const token=getToken()  ;
+  
   const fetchData=async ()=>{
     const response =await axiosClient.get('/api/activeFrindes',{
       headers:{
         'Authorization':`Bearer ${token}`
       }
     })
-    return response.data ;
-    
+    return response.data ; 
   } 
 
   const {data,isLoading}=useQuery({
@@ -31,7 +30,6 @@ const ActiveUersContainer=memo (()=>{
       {isLoading && [1, 2, 3, 4,5,6,7].map((index) => (
         <ActiveUserContainerLoading key={index} />
       ))}
-      <div onClick={()=>{ queryClient.invalidateQueries(["activeFr"],{exact:true});  }} className="size-16 rounded-full bg-black"> </div>
       {data && data.map((user)=><ActiveUserContainer  key={user.id} user={user} />)}
     </div>
   );
