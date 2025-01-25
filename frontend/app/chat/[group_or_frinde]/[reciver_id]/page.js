@@ -8,8 +8,6 @@ import { getToken } from '../../../helpers'
 import { useInfiniteQuery,useQuery } from '@tanstack/react-query';
 import axiosClient from '../../../axiosClient'
 import { usePathname } from 'next/navigation'
-//import fetchMessages from '../../../fetching function/chat'
-
 
 export default function Page() {
 
@@ -17,7 +15,7 @@ export default function Page() {
   const [isTyping,setIstyping]=useState(false) ;
   const pathname = usePathname()
 
-  const [urlParams,setUrlParams]=useState(()=>{
+  const [urlParams]=useState(()=>{
     const arr=pathname.split("/") ;
     return {type:arr[2],id:arr[3]}
   }) ;
@@ -38,7 +36,7 @@ export default function Page() {
   }
   
   const {status,error,data,isFetchingNextPage,fetchNextPage,hasNextPage}=useInfiniteQuery({
-    queryKey:["chat",urlParams] ,
+    queryKey:["chat",urlParams.type,urlParams.id] ,
     queryFn:({pageParam })=>fetchMessages(pageParam ) ,
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>{

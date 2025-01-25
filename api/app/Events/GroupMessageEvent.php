@@ -16,7 +16,7 @@ class GroupMessageEvent implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct(public Message $message)
+    public function __construct(public Message $message,public $members)
     {
         //
     }
@@ -28,10 +28,15 @@ class GroupMessageEvent implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel("group.{$this->message->messageable_id}"),
-        ];
+      //  $arr=[new PrivateChannel("group.{$this->message->messageable_id}")] ;
+       $arr=[] ;
+        foreach($this->members as $member){
+            array_push($arr,new PrivateChannel("chat.{$member}") ) ;
+        }
+        return $arr ;
     }
+
+    
 
 
     public function broadcastWith(){

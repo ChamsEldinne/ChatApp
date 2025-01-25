@@ -74,7 +74,11 @@ class MessagesController extends Controller
             'messageable_type' => $request->group_or_friend ? "App\Models\User" : 'App\Models\Group',
             'messageable_id' => $request->reciver_id
         ]);
-        broadcast(new GroupMessageEvent($message)) ;
+
+        $memebers=DB::select('SELECT relation.user_id
+                    FROM relation 
+                    WHERE relation.relationable_id=1 and relation.status in ("admin","accpted")') ;
+        broadcast(new GroupMessageEvent($message,$memebers)) ;
         return new MessagesResource($message) ;
     }
 

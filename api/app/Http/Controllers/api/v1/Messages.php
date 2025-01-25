@@ -103,7 +103,7 @@ class Messages extends Controller
         $reciver=null ;
         if($request->type==1){
             $reciver=DB::select("
-            SELECT users.id ,users.name ,personal_access_tokens.last_used_at ,
+            SELECT users.id ,users.name ,MAX( personal_access_tokens.last_used_at ) as last_used_at ,
                 CASE 
                     WHEN personal_access_tokens.last_used_at > DATETIME('now', '-2 minutes') THEN 1
                     ELSE 0

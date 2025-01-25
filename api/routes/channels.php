@@ -25,6 +25,9 @@ Broadcast::channel('group.{id}',function(User $user,$id){
   return  !count($group)==0  ; 
 
 }) ;
+Broadcast::channel('contact.{id}',function($user,$id){
+  return (int) $user->id === (int) $id;
+}) ;
 
 
 

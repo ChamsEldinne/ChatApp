@@ -26,17 +26,16 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'=>['required','email'] ,
+            'email'=>['required','email','exists:users,email'] ,
             'password'=>['required'] ,
         ]) ;
 
         $user = User::where('email', $request->email)->first();
         if (!Hash::check($request->password, $user->password)) {
-            return  response()->json(['errors'=>['password'=>'the password is incoreccet']], 401);
+            return  response()->json(['errors'=>['password'=>'the password is incoreccet']], 422);
         }
 
-        $token =$user->is_admin?  $user->createToken($user->email,['admin']):
-                                  $user->createToken($user->email,['user']);
+        $token =$user->createToken($user->email,['user']);
         return ['user' => $user, 'token' => $token->plainTextToken];
     }
 

@@ -1,5 +1,5 @@
 import { useState,useEffect,useRef} from 'react'
-import { getToken } from '../helpers';
+import { getToken, getUser } from '../helpers';
 import axiosClient from '../axiosClient';
 import ActiveUersContainer from './ActiveUersContainer';
 import ContactHeaderSection from './ContactHeaderSection';
@@ -7,12 +7,17 @@ import FrindeOrGroupHeader from './FrindeOrGroupHeader';
 import ConatctsBody from './ConatctsBody';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation'
+import useEcho from '../hookes/useEcho';
+import { useQueryClient } from '@tanstack/react-query';
 
 function Contact({setDisplayCreateGroup }) {
     const token=getToken() ;
     const pathname = usePathname()
     const [frindesOrGroups,setFrindesOrGroups]=useState(pathname.split("/")[2]==='group'?false:true) ; //true =>frindes ,flase=>groups  
     const contactBodyRef=useRef()
+
+    const user=getUser() ;
+
 
     const {status,error,data,isFetchingNextPage,fetchNextPage}=useInfiniteQuery({
       queryKey:['contact',frindesOrGroups] ,
@@ -45,6 +50,29 @@ function Contact({setDisplayCreateGroup }) {
       } 
              
     };
+    const echo=useEcho() ;
+    const queryClient=useQueryClient() ;
+
+    useEffect(()=>{
+      if(echo && user){
+        const channle =echo.private(`contact.${user.id}`) ;
+                  
+        const event='contact' ;
+  
+        channle.listen(event, (event) => {
+            
+          console.log(event)
+          // queryClient.setQueryData([],(oldData) => {
+  
+          //   if (!oldData) return; 
+  
+          // });
+  
+        });
+  
+
+      } 
+    },[echo])
 
   return (
     <section ref={contactBodyRef} onScroll={()=>handleScroll()} className={`${pathname.split("/").length>2 && window.matchMedia("(max-width: 767px)").matches ? "hidden":"" } overflow-y-auto bg-gray-900  h-full overflow-x-hidden relative top-0 z-10 flex flex-col flex-none w-full lg:max-w-sm md:w-5/12 transition-al  duration-300 ease-in-out`}>     

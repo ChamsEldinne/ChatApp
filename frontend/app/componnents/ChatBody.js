@@ -13,15 +13,17 @@ import useScrooll from '../hookes/useScrooll';
 import { useQueryClient } from '@tanstack/react-query';
 import Reciver2 from './Reciver2'
 
-function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextPage,status,messages,reciver=null,isLoading}) {
+
+function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextPage,status,messages,reciver,isLoading}) {
 
   const {blocks} = useBlocks(messages);
   const chatBodyRef=useRef() ;
 
-  const [scrollToBottomn,setScrollToBottomn]=useScrooll(chatBodyRef,fetchNextPage) ;
 
-  const [requestedTyping,setRequestedTyping]=useState(false) ;
+  const [scrollToBottomn,setScrollToBottomn]=useScrooll(chatBodyRef,fetchNextPage) ;
   const user=getUser() ;
+
+  const [requestedTyping,setRequestedTyping]=useState({isTyping:false,user: {id:null} }) ;
 
   function ScrollToBottomn(){
     if(chatBodyRef.current){
@@ -36,20 +38,33 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextP
     }
   },[blocks])
 
+
   const echo= useEcho() ;
   const queryClient=useQueryClient() ;
-  
+
   useEffect(()=>{
     if(echo && user){
       const channle =(urlParams.type=='user') ?
                     echo.private(`chat.${user.id}`) : 
                     echo.private(`group.${urlParams.id}`) ;
 
+    //  const channle =echo.private(`chat.${user.id}`) ;
+
+
       const event= (urlParams.type=='user' ) ? 'MessageSentEvent':'GroupMessageEvent'
 
       channle.listen(event, (event) => {
+        const message=event.message
+       
+        console.log(message) ;
 
-        queryClient.setQueryData(["chat",urlParams],(oldData) => {
+        const ReciverId=(message.messsageble_type=="App\\Models\\Group" || message.user_id==user.id) ? message.messageable_id
+        :message.user_id
+        const params={type:message.messsageble_type=="App\\Models\\Group"? 'group':'user',
+                      id:ReciverId
+        }
+
+        queryClient.setQueryData( ["chat",params.type,params.id.toString()] ,(oldData) => {
 
           if (!oldData) return; 
            
@@ -57,19 +72,69 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextP
             ...oldData,
             pages: oldData.pages.map((page, index) =>
               index === 0
-                ? { ...page, messages: [event.message, ...page.messages] } // Update only the first page
+                ? { ...page, messages: [message, ...page.messages] } // Update only the first page
                 : page
             ),
           };
 
         });
-        setScrollToBottomn(true)     
-      });
+        const groupOrUser=message.messsageble_type=="App\\Models\\User"
+        if(groupOrUser){
+          queryClient.setQueryData(['contact',groupOrUser?true:false],(oldData)=>{
+            if(!oldData) return ;
+             
+            //finde the contact first to update 
+             const s= oldData.pages.map((page,index)=>page.data.filter(d=>d.freinde_id==ReciverId )) 
+                   
+             const k=s[0][0] ?       
+                {
+                  ...s[0][0],
+                  message:message.message ,
+                  lates_message_date:message.time ,
+                  user_id:message.user_id ,
+                } :
+             
+                //frindes contact
+               {
+                  message:message.message,
+                  lates_message_date:message.time,
+                  user_id:message.user_id ,
+                  freinde_id:reciver?.id,
+                  freinde_name:reciver?.name,
+                  messsageble_type: "App\\Models\\User",
+                
+                }
+                // }:{
+  
+                //   //group contact 
+                //   message:message.message,
+                //   lates_message_date:message.time,
+                //   user_id:message.user_id ,
+                //   freinde_id:reciver?.id,
+                //   freinde_name:reciver?.name,
+                //   messsageble_type: "App\\Models\\Group",
+                // }
+  
+             return {
+              ...oldData,
+              pages:oldData.pages.map((page,index)=>{
+                const p={...page,data:page.data.filter((d)=>d.freinde_id!==ReciverId)}
+                return index===0 ?
+                 {...p, data :[k, ...p.data] }:
+                 page
+               })
+             }
+          }) ;
+        }
 
-      channle.listenForWhisper('typing', (e) => {
-        setRequestedTyping(e.isTyping);
-      });
-    } 
+      }) ;
+      
+    channle.listenForWhisper('typing', (e) => {
+      setRequestedTyping({isTyping:e.isTyping,user:e.user});
+    });
+       
+  }
+  
   },[echo])
 
 
@@ -82,7 +147,8 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextP
        
       echo.private(channel)
       .whisper('typing', {
-        isTyping:isTyping
+        isTyping:isTyping,
+        user: {id:user.id , name:user.name} ,
       });
     }
   
@@ -101,7 +167,7 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextP
     {isFetchingNextPage && <div className='flex justify-center w-full my-3'><LoadingSpiner /> </div> }
 
     {blocks.map((b,index)=><MessageContainer prev={index==0 ?null : blocks[index-1]} urlParams={urlParams}  key={index} block={b} />)}
-    {requestedTyping ? <Typing />:<div className='size-4'></div> }
+    {requestedTyping?.isTyping &&( (urlParams.type=='user' && requestedTyping.user.id==urlParams.id) || urlParams.type=='group' )? <Typing />:<div className='size-4'></div> }
   </div>
   )
 }

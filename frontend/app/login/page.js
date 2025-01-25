@@ -16,7 +16,8 @@ function page() {
     }
     async function login(e){
         e.preventDefault()
-        axiosClient.get('/sanctum/csrf-cookie').then(async ()  => {
+        // axiosClient.get('/sanctum/csrf-cookie').then(
+        //   async ()  => {
         try {
           setLoading(true) ;
           const response =await  axiosClient.post('api/login',
@@ -48,7 +49,8 @@ function page() {
         }finally{
           setLoading(false) ;
         }
-      });
+      
+      //});
     };  
   return (
  <div className='bg-gray-900 h-screen w-full  flex justify-center items-center'>
