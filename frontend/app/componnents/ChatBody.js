@@ -80,7 +80,7 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextP
     {isFetchingNextPage && <div className='flex justify-center w-full my-3'><LoadingSpiner /> </div> }
 
     {blocks.map((b,index)=><MessageContainer prev={index==0 ?null : blocks[index-1]} urlParams={urlParams}  key={index} block={b} />)}
-    {requestedTyping?.isTyping &&( (urlParams.type=='user' && requestedTyping.user.id==urlParams.id) || urlParams.type=='group' )? <Typing />:<div className='size-4'></div> }
+    {requestedTyping?.isTyping &&( (urlParams.type=='user' && requestedTyping.user.id==urlParams.id) || urlParams.type=='group' )? <Typing user={requestedTyping.user}/>:<div className='size-4'></div> }
   </div>
   )
 }

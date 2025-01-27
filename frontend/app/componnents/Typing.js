@@ -1,17 +1,5 @@
-'use client'
-// import { useEffect ,useState} from 'react';
 
-
-function Typing() {
-
-
-    // const [audio] = useState(() => new Audio('/../public/audio/Keyboard.mp3')); // Initialize the audio instance
-
-    // const handlePlayAudio = () => {
-    //   audio.play().catch((err) => {
-    //     console.error('Failed to play audio:', err);
-    //   });
-    // };
+function Typing({user}) {
   
     return (
     <div className="my-2">
@@ -23,9 +11,7 @@ function Typing() {
             />
           </div>
           <div className="messages text-sm text-gray-700 grid grid-flow-row gap-2">
-           {/* <audio src='/public/audio/Keyboard.mp3' autoPlay={true} >
-                Your browser does not support the audio element.
-            </audio> */}
+            <h1 className="text-sm text-gray-400  -my-4 ">{user.name}</h1>
             <div className="flex items-center space-x-1 bg-gray-800 rounded-full p-3">
                   {/* <span className="text-gray-200">Typing</span> */}
                 <div className="flex space-x-1">
