@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers\api\v1;
 
-use App\Events\GroupMessageEvent;
-use App\Events\MessageSentEvent;
+use App\Events\MessageEvent;
 use App\Http\Resources\api\v1\MessagesResource;
 use App\Models\Message;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Events\sendMessageEvent ;
-
+use App\Models\Relation ;
 class MessagesController extends Controller
 {
     public function show(Message $message){
@@ -51,7 +49,10 @@ class MessagesController extends Controller
                 'messageable_type' =>"App\Models\User" ,
                 'messageable_id' => $request->reciver_id
             ]);
-            broadcast(new MessageSentEvent($message,$user->id)) ;
+
+            $userIds=[$request->reciver_id,$user->id] ;
+
+            broadcast(new MessageEvent($message,$userIds)) ;
             return new MessagesResource($message) ;
         }
 
@@ -75,10 +76,12 @@ class MessagesController extends Controller
             'messageable_id' => $request->reciver_id
         ]);
 
-        $memebers=DB::select('SELECT relation.user_id
-                    FROM relation 
-                    WHERE relation.relationable_id=1 and relation.status in ("admin","accpted")') ;
-        broadcast(new GroupMessageEvent($message,$memebers)) ;
+        $userIds = Relation::where('relationable_id', $request->reciver_id)
+        ->where('relationable_type', 'App\Models\Group')
+        ->whereIn('status', ['admin', 'accpted'])
+        ->pluck('user_id');
+
+        broadcast(new MessageEvent($message,$userIds)) ;
         return new MessagesResource($message) ;
     }
 

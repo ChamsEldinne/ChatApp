@@ -8,19 +8,16 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Message ;
-use App\Models\User ;
-
-use Illuminate\Support\Facades\Auth ;
 
 
-class MessageSentEvent implements ShouldBroadcast
+class MessageEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(public Message $message,public  $userId)
+    public function __construct(public Message $message,public $userIds)
     {
         //
     }
@@ -32,25 +29,21 @@ class MessageSentEvent implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel("chat.{$this->message->messageable_id}"),
-            new PrivateChannel("chat.{$this->message->user_id}"),
-
-            new PrivateChannel("contact.{$this->message->messageable_id}") ,
-            new PrivateChannel("contact.{$this->message->user_id}")
-        ];
+        $arr=[] ;
+        foreach($this->userIds as $id){
+            array_push($arr,new PrivateChannel("chat.{$id}") ) ;
+        }
+        return $arr ;
     }
 
 
     public function broadcastWith(){
-       // $user=Auth::user() ;
         return [
             "message"=>[
                 'id'=>$this->message->id ,
                 'message'=>$this->message->message,
                 'time'=>$this->message->created_at,
                 "user_id"=>$this->message->user_id ,
-               // 'reciv_or_sent'=>$this->message->user_id==$user->id? 1:0,// 1 send ,0 reci 
                 "messageable_id"=>$this->message->messageable_id,
                 "messsageble_type"=>$this->message->messageable_type ,
             ]

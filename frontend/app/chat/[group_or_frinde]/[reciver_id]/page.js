@@ -13,7 +13,7 @@ export default function Page() {
 
   const token=getToken() ;
   const [isTyping,setIstyping]=useState(false) ;
-  const pathname = usePathname()
+  const pathname = usePathname()  
 
   const [urlParams]=useState(()=>{
     const arr=pathname.split("/") ;

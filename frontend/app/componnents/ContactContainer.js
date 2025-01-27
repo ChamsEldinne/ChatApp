@@ -2,7 +2,7 @@ import { memo ,useMemo} from 'react'
 import { getDifrnecInMinuts, getUser,formateMinutes } from '../helpers';
 import Link from 'next/link';
 
-const ContactContainer=memo( ({cont=null})=>{
+const ContactContainer= ({cont=null})=>{
   
     const randomNumber=useMemo(()=> Math.floor(Math.random() * (100 )) + 1,[])
     const user=getUser() ;
@@ -23,10 +23,10 @@ const ContactContainer=memo( ({cont=null})=>{
                 <div className="min-w-0">
                     <p className="truncate font-bold">{cont.user_id==user.id ? `You :${cont.message}`:cont.message } </p>
                 </div>
-                 <p className="ml-2 whitespace-no-wrap">{formateMinutes( getDifrnecInMinuts( null,cont.lates_message_date)) } </p> 
+                 <p className="ml-2 whitespace-no-wrap">{ formateMinutes(getDifrnecInMinuts( null,cont.lates_message_date)) } </p> 
             </div>
         </div>
     </Link>
   )
-});
+};
 export default ContactContainer

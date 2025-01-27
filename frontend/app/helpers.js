@@ -35,9 +35,9 @@ export const formateMinutes=(minutes)=>{
   }else if (minutes > 60){
     return `${Math.floor( minutes/60)}h`
   }else if(minutes>=1){
-    `${Math.floor( minutes)}m`
-  }else{
-    `${Math.floor(minutes*60)}s`
+    return `${Math.floor( minutes)}m`
+  }else if(minutes>0){
+   return `${Math.floor(minutes*60)}s`
   }
   return null ;
 }

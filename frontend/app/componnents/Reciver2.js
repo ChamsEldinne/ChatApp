@@ -5,7 +5,7 @@ function Reciver2({reciverUser=null,urlParams}) {
   return (
      <div className="flex flex-col justify-center items-center w-full">
           {
-            reciverUser.type=='user' ?
+            reciverUser?.type=='user' ?
           
             <div className="size-20 mr-4 relative flex flex-shrink-0">
                 <img className="shadow-md rounded-full w-full h-full object-cover"

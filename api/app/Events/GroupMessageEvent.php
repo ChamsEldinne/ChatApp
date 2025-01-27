@@ -31,7 +31,7 @@ class GroupMessageEvent implements ShouldBroadcast
       //  $arr=[new PrivateChannel("group.{$this->message->messageable_id}")] ;
        $arr=[] ;
         foreach($this->members as $member){
-            array_push($arr,new PrivateChannel("chat.{$member}") ) ;
+            array_push($arr,new PrivateChannel("chat.{$member->user_id}") ) ;
         }
         return $arr ;
     }
@@ -46,7 +46,6 @@ class GroupMessageEvent implements ShouldBroadcast
                 'message'=>$this->message->message,
                 'time'=>$this->message->created_at,
                 "user_id"=>$this->message->user_id ,
-                'reciv_or_sent'=>0, //1 send ,0 reci
                 "messageable_id"=>$this->message->messageable_id,
                 "messsageble_type"=>$this->message->messageable_type ,
             ]

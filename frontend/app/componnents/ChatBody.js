@@ -10,7 +10,6 @@ import useBlocks from '../hookes/useBlocks';
 import useEcho from '../hookes/useEcho';
 import Typing from './Typing';
 import useScrooll from '../hookes/useScrooll';
-import { useQueryClient } from '@tanstack/react-query';
 import Reciver2 from './Reciver2'
 
 
@@ -18,8 +17,6 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextP
 
   const {blocks} = useBlocks(messages);
   const chatBodyRef=useRef() ;
-
-
   const [scrollToBottomn,setScrollToBottomn]=useScrooll(chatBodyRef,fetchNextPage) ;
   const user=getUser() ;
 
@@ -40,107 +37,23 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextP
 
 
   const echo= useEcho() ;
-  const queryClient=useQueryClient() ;
-
-  useEffect(()=>{
-    if(echo && user){
-      const channle =(urlParams.type=='user') ?
-                    echo.private(`chat.${user.id}`) : 
-                    echo.private(`group.${urlParams.id}`) ;
-
-    //  const channle =echo.private(`chat.${user.id}`) ;
-
-
-      const event= (urlParams.type=='user' ) ? 'MessageSentEvent':'GroupMessageEvent'
-
-      channle.listen(event, (event) => {
-        const message=event.message
-       
-        console.log(message) ;
-
-        const ReciverId=(message.messsageble_type=="App\\Models\\Group" || message.user_id==user.id) ? message.messageable_id
-        :message.user_id
-        const params={type:message.messsageble_type=="App\\Models\\Group"? 'group':'user',
-                      id:ReciverId
-        }
-
-        queryClient.setQueryData( ["chat",params.type,params.id.toString()] ,(oldData) => {
-
-          if (!oldData) return; 
-           
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page, index) =>
-              index === 0
-                ? { ...page, messages: [message, ...page.messages] } // Update only the first page
-                : page
-            ),
-          };
-
-        });
-        const groupOrUser=message.messsageble_type=="App\\Models\\User"
-        if(groupOrUser){
-          queryClient.setQueryData(['contact',groupOrUser?true:false],(oldData)=>{
-            if(!oldData) return ;
-             
-            //finde the contact first to update 
-             const s= oldData.pages.map((page,index)=>page.data.filter(d=>d.freinde_id==ReciverId )) 
-                   
-             const k=s[0][0] ?       
-                {
-                  ...s[0][0],
-                  message:message.message ,
-                  lates_message_date:message.time ,
-                  user_id:message.user_id ,
-                } :
-             
-                //frindes contact
-               {
-                  message:message.message,
-                  lates_message_date:message.time,
-                  user_id:message.user_id ,
-                  freinde_id:reciver?.id,
-                  freinde_name:reciver?.name,
-                  messsageble_type: "App\\Models\\User",
-                
-                }
-                // }:{
-  
-                //   //group contact 
-                //   message:message.message,
-                //   lates_message_date:message.time,
-                //   user_id:message.user_id ,
-                //   freinde_id:reciver?.id,
-                //   freinde_name:reciver?.name,
-                //   messsageble_type: "App\\Models\\Group",
-                // }
-  
-             return {
-              ...oldData,
-              pages:oldData.pages.map((page,index)=>{
-                const p={...page,data:page.data.filter((d)=>d.freinde_id!==ReciverId)}
-                return index===0 ?
-                 {...p, data :[k, ...p.data] }:
-                 page
-               })
-             }
-          }) ;
-        }
-
-      }) ;
-      
-    channle.listenForWhisper('typing', (e) => {
-      setRequestedTyping({isTyping:e.isTyping,user:e.user});
-    });
-       
-  }
-  
-  },[echo])
 
 
   useEffect(()=>{
     if(echo){
-        
+      const channle =(urlParams.type=='user') ?
+      echo.private(`chat.${user.id}`) : 
+      echo.private(`group.${urlParams.id}`) ;
+
+      channle.listenForWhisper('typing', (e) => {
+        setRequestedTyping({isTyping:e.isTyping,user:e.user}); 
+      });
+    }
+  },[echo])
+
+
+  useEffect(()=>{
+    if(echo){        
       const channel= (urlParams.type=='user') ? 
                   `chat.${urlParams.id}` :
                   `group.${urlParams.id}`
