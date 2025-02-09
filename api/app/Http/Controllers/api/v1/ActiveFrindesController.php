@@ -16,7 +16,7 @@ class ActiveFrindesController extends Controller
     {
         $user=Auth::user() ;
         $freinds= DB::select("
-            SELECT users.id ,users.name ,MAX( personal_access_tokens.last_used_at ) as last_used_at ,
+            SELECT users.id ,users.name ,personal_access_tokens.last_used_at  as last_used_at ,
                 CASE 
                     WHEN personal_access_tokens.last_used_at > DATETIME('now', '-2 minutes') THEN 1
                     ELSE 0
@@ -32,7 +32,8 @@ class ActiveFrindesController extends Controller
             WHERE   (relation.user_id= :user_id or relation.relationable_id= :user_id ) and relation.status='accpted' and relationable_type='App\Models\User' ) join personal_access_tokens 
             on users.id=frinde_id and personal_access_tokens.tokenable_id=users.id and personal_access_tokens.tokenable_type='App\Models\User' 
             ORDER by  personal_access_tokens.last_used_at DESC",
-        ['user_id'=>$user->id]) ;
+        
+            ['user_id'=>$user->id]) ;
         return response()->json($freinds) ;
     }
 }

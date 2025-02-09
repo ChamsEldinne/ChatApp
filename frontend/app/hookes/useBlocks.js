@@ -5,6 +5,7 @@ export  const useBlocks=(messages)=> {
 
     const [blocks,setBlocks]=useState([]);
 
+
     //rerender the messages response into blocks of messages where each bolock contains messages that are 
     // sent or recived in the same time 
 
@@ -40,6 +41,7 @@ export  const useBlocks=(messages)=> {
 
     
     useEffect(()=>{
+     
       f()
     },[messages])
 

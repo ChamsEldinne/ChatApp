@@ -70,13 +70,20 @@ export default function Page() {
 
   
   return (
-      <section className={ `flex z-10 md:flex flex-col flex-auto bg-gray-900 border-l relative border-gray-800`}>
+    <div className='flex'>
+      <section className={ `flex scroll-smooth lg:w-[40vw]  w-screen md:w-[60vw] z-10 md:flex flex-col flex-auto bg-gray-900 border-l border-r relative border-gray-800`}>
         <ChatHeader isLoading={reciver.isLoading} reciver={ reciver.data ? reciver.data.reciver[0]:null} />
         <ChatBody isLoading={reciver.isLoading} reciver={ reciver.data ? reciver.data.reciver[0]:null}
           fetchNextPage={fetchNextPage} isTyping={isTyping} hasNextPage={hasNextPage}
           messages={data!=null ? data.pages.flatMap(item => item.messages) :[]}
-           urlParams={urlParams} status={status} isFetchingNextPage={isFetchingNextPage}   />
+          urlParams={urlParams} status={status} isFetchingNextPage={isFetchingNextPage}   />
         <ChatFooter setIstyping={setIstyping}  urlParams={urlParams} />
-     </section>
+      </section>
+
+      <div className={`hidden lg:flex w-[25vw] z-10  justify-center  items-center bg-gray-900 border-l relative border-gray-800`} >
+          <h1 className='text-xl text-center text-gray-200 font-semibold'>comming soon</h1>
+      </div>
+
+     </div>
   )
 }

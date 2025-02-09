@@ -63,35 +63,24 @@ function Provider({ children }) {
 
                 //finde the contact first to update
                 const contactThatGoingToChange = groupOrUser
-                ? oldData.pages.map((page) =>
-                    page.data.filter((d) => d.freinde_id == ReciverId)
-                    )
-                : oldData.pages.map((page) =>
-                    page.data.filter((d) => d.group_id == ReciverId)
-                    );
+                ? oldData.pages.map((page) => page.data.filter((d) => d.freinde_id == ReciverId))
+                : oldData.pages.map((page) =>  page.data.filter((d) => d.group_id == ReciverId));
 
-                const newContactInstance = ContactInstance(
-                contactThatGoingToChange[0][0],
-                groupOrUser,
-                message,
-                ReciverId
-                );
+                const newContactInstance = ContactInstance( contactThatGoingToChange[0][0], groupOrUser,message, ReciverId);
 
                 //mutate the oldDtata
                 return {
-                    ...oldData,
-                    pages: oldData.pages.map((page, index) => {
-                        //remove if it exist and upate it with the new
-                        const p = { ...page,
-                        data: page.data.filter(
-                            (d) =>d[groupOrUser ? "freinde_id" : "group_id"] !== ReciverId
-                        ),
-                        };
+                  ...oldData,
+                  pages: oldData.pages.map((page, index) => {
+                    //remove if it exist and upate it with the new
+                    const p = { ...page,
+                    data: page.data.filter((d) =>d[groupOrUser ? "freinde_id" : "group_id"] !== ReciverId),
+                    };
 
-                        return index === 0
-                        ? { ...p, data: [newContactInstance, ...p.data] } // Update only the first page
-                        : page;
-                    }),
+                    return index === 0
+                    ? { ...p, data: [newContactInstance, ...p.data] } // Update only the first page
+                    : page;
+                  }),
                 };
           });
       });
@@ -103,10 +92,8 @@ function Provider({ children }) {
       <Contact setDisplayCreateGroup={setDisplayCreateGroup} />
       {children}
       {displayCreateGroup && (
-        <CreateGroup
-          displayCreateGroup={displayCreateGroup}
-          setDisplayCreateGroup={setDisplayCreateGroup}
-        />
+        <CreateGroup displayCreateGroup={displayCreateGroup}
+          setDisplayCreateGroup={setDisplayCreateGroup}/>
       )}
     </main>
   );

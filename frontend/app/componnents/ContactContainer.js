@@ -14,7 +14,8 @@ const ContactContainer= ({cont=null})=>{
         <div className="w-16 h-16 relative flex flex-shrink-0">
             <img className="shadow-md rounded-full w-full h-full object-cover"
                     src={`https://randomuser.me/api/portraits/men/${randomNumber}.jpg`}
-                    alt=""
+                    alt="" 
+                    loading='lazy'
             />
         </div>
         <div className="flex-auto min-w-0 ml-4 mr-2 block">

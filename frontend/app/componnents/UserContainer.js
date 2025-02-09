@@ -31,7 +31,8 @@ function UserContainer({user}) {
       <div className="w-16 h-16 relative flex flex-shrink-0">
           <img className="shadow-md rounded-full w-full h-full object-cover"
             src={`https://randomuser.me/api/portraits/men/${randomNumber}.jpg`}
-            alt=""
+            alt="not founde"
+            loading='lazy'
           />
 
       </div>

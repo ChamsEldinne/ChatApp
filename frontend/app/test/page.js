@@ -1,11 +1,14 @@
 'use client'
-import React, { useState } from "react";
-import Typing from "../componnents/Typing";
+import LastReaderContainer from '../componnents/LastReaderContainer'
 
 
 const PersonalLandingPage = () => {
 
-  return <Typing user={{name:"chamso"}}/>  
+  return (
+    <div>
+      <LastReaderContainer />
+    </div>
+  )  
 };
 
 export default PersonalLandingPage;

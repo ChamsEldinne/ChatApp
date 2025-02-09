@@ -2,7 +2,7 @@
 function Typing({user}) {
   
     return (
-    <div className="my-2">
+    <div className="mt-4">
         <div className={`flex flex-row justify-start`}>
           <div className={`flex w-8 h-8 relative  flex-shrink-0 mr-4`}>
             <img className="shadow-md rounded-full w-full h-full object-cover"

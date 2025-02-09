@@ -1,5 +1,8 @@
 import React from 'react'
-import Provider from './Provider';
+import Provider from './Provider'; 
+export const metaData={
+  title:"Chat | Inbox"
+}
 
 
 export default function ChatLayout({children}) {     

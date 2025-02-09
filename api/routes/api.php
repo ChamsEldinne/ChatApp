@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\v1\RelationsController;
 use App\Http\Controllers\api\v1\Contact ;
 
+use App\Http\Controllers\api\v1\LastReadMessageController;
+
 
 use Illuminate\Support\Facades\DB ;
 
@@ -53,4 +55,10 @@ Route::group(['middleware'=>['auth:sanctum']],routes: function(){
     Route::get('/activeFrindes',ActiveFrindesController::class) ;
     
     Route::get('/messages/reciver',[Messages::class,'reciver']) ;
+
+
+    Route::post('/lastReadMessage',[LastReadMessageController::class,"updateOrCreate"]) ;
+    Route::get('/lastReadMessage',[LastReadMessageController::class,"show"]) ;
+
+    Route::get('/relation',[LastReadMessageController::class,'relation']) ;
 });

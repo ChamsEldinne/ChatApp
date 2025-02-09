@@ -10,11 +10,13 @@ function GroupContactContainer({ cont }) {
         <div className="w-16 h-16 relative flex flex-shrink-0">
             <img className="shadow-md rounded-full w-10 h-10 object-cover absolute ml-6"
                   src="https://randomuser.me/api/portraits/men/22.jpg"
-                  alt="User2"
+                  alt="User1"
+                  loading='lazy'
             />
             <img className="shadow-md rounded-full w-10 h-10 object-cover absolute mt-6"
                   src="https://randomuser.me/api/portraits/men/55.jpg"
                   alt="User2"
+                  loading='lazy'
             />
             <div className="absolute bg-gray-900 p-1 rounded-full bottom-0 right-0">
                 <div className="bg-green-500 rounded-full w-3 h-3"></div>

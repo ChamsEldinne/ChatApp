@@ -52,6 +52,17 @@ function ChatLoading() {
                 </div>
             </div>
         </div>
+        <div className="flex flex-row justify-end">
+        
+        <div className="messages  text-sm text-gray-700 flex flex-col  items-end gap-2">
+                <div className="flex items-center group">
+                    <p className="rounded-t-full rounded-l-full bg-slate-400 w-44 h-10 animate-pulse"></p>
+                </div>
+                <div className="flex items-center group">
+                    <p className="rounded-b-full rounded-l-full bg-slate-400 w-48 h-10 animate-pulse"></p>
+                </div>
+            </div>
+        </div>
     </div>
   )
 }

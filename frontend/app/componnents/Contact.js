@@ -1,4 +1,4 @@
-import { useState,useEffect,useRef} from 'react'
+import { useState,useRef} from 'react'
 import { getToken, getUser } from '../helpers';
 import axiosClient from '../axiosClient';
 import ActiveUersContainer from './ActiveUersContainer';
@@ -7,8 +7,6 @@ import FrindeOrGroupHeader from './FrindeOrGroupHeader';
 import ConatctsBody from './ConatctsBody';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation'
-import useEcho from '../hookes/useEcho';
-import { useQueryClient } from '@tanstack/react-query';
 import useDisplayContact from '../hookes/useDisplayContact';
 
 function Contact({setDisplayCreateGroup }) {
@@ -16,10 +14,7 @@ function Contact({setDisplayCreateGroup }) {
     const pathname = usePathname()
     const [frindesOrGroups,setFrindesOrGroups]=useState(pathname.split("/")[2]==='group'?false:true) ; //true =>frindes ,flase=>groups  
     const contactBodyRef=useRef()
-
-    const user=getUser() ;
     const displayConatct=useDisplayContact(pathname) ;
-
 
     const {status,error,data,isFetchingNextPage,fetchNextPage}=useInfiniteQuery({
       queryKey:['contact',frindesOrGroups] ,
@@ -52,32 +47,9 @@ function Contact({setDisplayCreateGroup }) {
       } 
              
     };
-    // const echo=useEcho() ;
-    // const queryClient=useQueryClient() ;
-
-    // useEffect(()=>{
-    //   if(echo && user){
-    //     const channle =echo.private(`contact.${user.id}`) ;
-                  
-    //     const event='contact' ;
-  
-    //     channle.listen(event, (event) => {
-            
-    //       console.log(event)
-    //       // queryClient.setQueryData([],(oldData) => {
-  
-    //       //   if (!oldData) return; 
-  
-    //       // });
-  
-    //     });
-  
-
-    //   } 
-    // },[echo])
 
   return (
-    <section ref={contactBodyRef} onScroll={()=>handleScroll()} className={`${displayConatct ? "flex":"hidden" } overflow-y-auto bg-gray-900  h-full overflow-x-hidden relative top-0 z-10  flex-col flex-none w-full lg:max-w-sm md:w-5/12 transition-al  duration-300 ease-in-out`}>     
+    <section ref={contactBodyRef} onScroll={()=>handleScroll()} className={`${displayConatct ? "flex":"hidden" } w-screen md:w-[40vw] lg:w-[35vw] overflow-y-auto bg-gray-900  h-full overflow-x-hidden relative top-0 z-10  flex-col flex-none  lg:max-w-sm transition-al  duration-300 ease-in-out`}>     
       <ContactHeaderSection setDisplayCreateGroup={setDisplayCreateGroup} />
       <FrindeOrGroupHeader  frindesOrGroups={frindesOrGroups}  setFrindesOrGroups={setFrindesOrGroups} />
       <ActiveUersContainer   />    
