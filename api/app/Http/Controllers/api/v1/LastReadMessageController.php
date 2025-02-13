@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\DB ;
 use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Models\Relation;
-
-
-
 class LastReadMessageController extends Controller
 {
 
@@ -21,63 +18,14 @@ class LastReadMessageController extends Controller
     public function updateOrCreate(Request $request)
     {
         $attributes= $request->validate([
-            "relation_id"=>['required'] ,
-            "message_id"=>['required'] ,
-        ]);
-        $user=Auth::user() ;
-
-        $r= Relation::findOrFail($request->relation_id) ; 
-
-        $m=Message::findOrFail($attributes['message_id']) ;
-
-
-        if (($r->user_id==$user->id ||
-          ( $r->relationable_type=="App\Models\User" && $r->relationable_id==$user->id) )&&
-          ($r->status=="admin" || $r->status=="accpted") ){
-
-            
-            if( ($m->user_id==$r->user_id && $m->messageable_id==$r->relationable_id) ||
-                ($m->user_id==$r->relationable_id && $m->messageable_id==$r->user_id ) ) {
-
-                $attributes["user_id"]=$user->id ;
-                $lrm=LastReadMessage::updateOrCreate(['relation_id'=>$request->relation_id,'user_id'=>$user->id],$attributes) ;
-                return response()->json(['last_read_message'=>$lrm])  ;
-            }
-                    
-        }
-        
-        return response()->json(null,403) ;            
-    }
-
-    public function show(Request $request){
-        $request->validate([
-            "relation_id"=>['required','exists:relation,id'] ,
-        ]);
-         
-        $resault=DB::
-        select("SELECT 
-            message_id ,
-            json_group_array(json_object('id', user_id)) AS user_ids  
-            FROM last_read_message
-            WHERE relation_id = :relation_id
-            GROUP BY message_id",
-        ['relation_id'=>$request->relation_id]) ;
-
-        foreach($resault as $r){
-            $r->user_ids=json_decode( $r->user_ids,true)  ;
-        }
-    
-        return response()->json($resault) ;
-    }
-
-
-    public function relation(Request $request){
-        $attributes=$request->validate([
             "reciver_id"=>['required','integer'] ,
             "type"=>["required","string","in:user,group"] ,
+            "message_id"=>['required'] ,
         ]) ;
         $user=Auth::user() ;
 
+
+        //get the relation id 
         $relation=DB::select("
         SELECT relation.*
         from relation 
@@ -86,14 +34,67 @@ class LastReadMessageController extends Controller
             "id1"=>$attributes['reciver_id'] ,
             "id2"=>$user->id ,
             "type"=>$request->type=="group" ? "App\Models\Group" : "App\Models\User"
-        ]);
-        if(count( $relation)>=1){
-            return response()->json(['relation'=>$relation[0]]) ;
+        ]);  
+        
+        // return $relation ;
+        
+        if(count( $relation)==0){
+            return response()->json(null,403) ;
         }
 
-        return response()->json(null,403) ;
+        $r=$relation[0] ;
 
+        $m=Message::findOrFail($attributes['message_id']) ;
+            
+        //check if message belong to one of them 
+        if( ($m->user_id==$r->user_id || $m->user_id==$r->relationable_id ) ) {
+            $lrm=LastReadMessage::updateOrCreate(
+                ['user_id'=>$user->id,"messageable_id"=>$request->reciver_id,
+                             "messageable_type"=>$m->messageable_type],[
+                'user_id'=>$user->id,
+                "messageable_id"=>$request->reciver_id,
+                "messageable_type"=>$m->messageable_type ,
+                "message_id"=>$request->message_id ,
+            ]) ;
+            return response()->json(['last_read_message'=>$lrm])  ;
+        }
+                
+        
+        
+        return response()->json(null,403) ;            
     }
 
+    public function show(Request $request){
+        
+        $attributes=$request->validate([
+            "reciver_id"=>['required','integer'] ,
+            "type"=>["required","string","in:user,group"] ,
+        ]) ;  
+        $reasult=collect() ;
+        
+        if($attributes["type"]=="user"){
+            $user=Auth::user() ;
+            $reasult=DB::select("SELECT  last_read_message.message_id ,
+                json_group_array(json_object('id', user_id,'seen_at',updated_at )) AS user_ids  
+                from last_read_message 
+                where ((user_id=:id1 and messageable_id=:id2 ) or (user_id=:id2 and messageable_id=:id1 ))
+             and messageable_type='App\Models\User' 
+             group by message_id ", 
+             ["id1"=>$user->id,"id2"=>$attributes["reciver_id"]]) ;
 
+        }else if($attributes["type"]=="group"){
+            $reasult=DB::select("SELECT  last_read_message.message_id ,
+                json_group_array(json_object('id', user_id,'seen_at',updated_at )) AS user_ids  
+                from last_read_message 
+                where  messageable_id=:id1 and messageable_type='App\Models\Group' 
+                group by message_id",
+             ["id1"=>$attributes["reciver_id"]]) ;
+        }
+
+        foreach($reasult as $r){
+            $r->user_ids=json_decode( $r->user_ids,true)  ;
+        }
+    
+        return response()->json($reasult) ;
+    }
 }

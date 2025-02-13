@@ -6,8 +6,8 @@ import ChatBody from '../../../componnents/ChatBody'
 import { useState,useEffect } from 'react'
 import { getToken } from '../../../helpers'
 import { useInfiniteQuery,useQuery } from '@tanstack/react-query';
-import axiosClient from '../../../axiosClient'
 import { usePathname } from 'next/navigation'
+import {fetchReciver,fetchMessages ,fetchLastRead} from '../../fetch/index'
 
 export default function Page() {
 
@@ -20,24 +20,9 @@ export default function Page() {
     return {type:arr[2],id:arr[3]}
   }) ;
  
-  const fetchMessages =async(c)=>{  
-    const url=`/api/messages/${pathname.split("/")[2]=="user"?"frinde":"group"}?page=${c}`
-
-    const response = await axiosClient.get(url, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        params: {
-          reciver_id:urlParams.id ,
-        }
-    })
-    return response.data
-  }
-  
   const {status,error,data,isFetchingNextPage,fetchNextPage,hasNextPage}=useInfiniteQuery({
     queryKey:["chat",urlParams.type,urlParams.id] ,
-    queryFn:({pageParam })=>fetchMessages(pageParam ) ,
+    queryFn:({pageParam })=>fetchMessages(pageParam,token,urlParams.type,urlParams.id) ,
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>{
       const nextPageUrl = lastPage.pagination.next_page_url;
@@ -46,27 +31,21 @@ export default function Page() {
     staleTime:Infinity,
   })
 
-  async function fetchReciver(){
-    const response= await axiosClient.get('/api/messages/reciver',
-    {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
-    ,  
-    params:{ 
-        reciver_id:urlParams.id,
-        type:urlParams.type==='user'?1:0 ,
-    }
-    })
-  return  response.data
-  }
   const reciver=useQuery({
     queryKey:[urlParams] ,
-    queryFn:fetchReciver ,
-    staleTime:Infinity ,
+    queryFn:()=>fetchReciver(urlParams.id,urlParams.type,token) ,
+    staleTime:1000*60*2 ,//2min
     retry:2, 
   })
+
+
+  const lastRead=useQuery({
+    queryKey:["lastRead",urlParams.type,urlParams.id] ,
+    queryFn:()=>fetchLastRead(urlParams.id,urlParams.type,token) ,
+    staleTime:Infinity ,
+    retry:2 ,  
+  })
+ 
 
   
   return (
@@ -76,7 +55,7 @@ export default function Page() {
         <ChatBody isLoading={reciver.isLoading} reciver={ reciver.data ? reciver.data.reciver[0]:null}
           fetchNextPage={fetchNextPage} isTyping={isTyping} hasNextPage={hasNextPage}
           messages={data!=null ? data.pages.flatMap(item => item.messages) :[]}
-          urlParams={urlParams} status={status} isFetchingNextPage={isFetchingNextPage}   />
+          urlParams={urlParams} status={status} isFetchingNextPage={isFetchingNextPage}  lastRead={lastRead}  />
         <ChatFooter setIstyping={setIstyping}  urlParams={urlParams} />
       </section>
 

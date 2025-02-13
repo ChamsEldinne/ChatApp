@@ -13,6 +13,9 @@ class Group extends Model
     {
         return $this->morphMany(Message::class, 'messageable');
     }
+    public function last_read_message(){
+        return $this->morphMany(LastReadMessage::class,"messageable") ;
+    }
     public function members(){
         return $this->users()->wherePivot('status', 'accepted') ;
     }

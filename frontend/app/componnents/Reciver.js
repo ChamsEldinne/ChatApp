@@ -8,7 +8,7 @@ const Reciver=memo(({reciverUser=null})=> {
       {
         reciverUser.type=='user' ?
       
-        <div className="size-12 mr-4 relative flex flex-shrink-0">
+        <div className="size-10 md:size-12 mr-4 relative flex flex-shrink-0">
             <img className="shadow-md rounded-full w-full h-full object-cover"
                     src="https://randomuser.me/api/portraits/women/33.jpg"
                     alt=""
@@ -19,7 +19,7 @@ const Reciver=memo(({reciverUser=null})=> {
                 }
         </div>
         :   
-        <div className="size-12 mr-4 relative flex flex-shrink-0">
+        <div className="size-10 md:size-12 mr-4 relative flex flex-shrink-0">
           <img className="shadow-md rounded-full size-8 object-cover absolute ml-6"
                 src="https://randomuser.me/api/portraits/men/22.jpg"
                 alt="User2"

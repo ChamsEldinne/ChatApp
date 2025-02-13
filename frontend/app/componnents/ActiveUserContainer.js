@@ -1,9 +1,8 @@
 'use client'
-import { memo } from "react";
 import { formateMinutes, getDifrnecInMinuts } from "../helpers";
 import Link from "next/link";
 
-const ActiveUserContainer =memo( ({user=null})=> {
+const ActiveUserContainer = ({user=null})=> {
   const randomNumber=Math.floor(Math.random() * (100 )) + 1 ;
   return (
     <Link href={`/chat/user/${user.id}`} className="text-sm h-fit text-center mr-2 cursor-pointer hover:opacity-80 transition-opacity">
@@ -26,6 +25,6 @@ const ActiveUserContainer =memo( ({user=null})=> {
       <p>{user?.name}</p>
     </Link>
   )
-})
+}
 
 export default ActiveUserContainer ;

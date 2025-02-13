@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Models\User ;
-use App\Models\Relation ;
+use App\Models\Group ;
 use App\Models\Message ;
 
 return new class extends Migration
@@ -16,9 +16,9 @@ return new class extends Migration
     {
         Schema::create('last_read_message', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class) ;
-            $table->foreignIdFor(Relation::class) ;
-            $table->foreignIdFor(Message::class) ;
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete() ;
+            $table->morphs('messageable') ;
+            $table->foreignIdFor(Message::class)->constrained()->cascadeOnDelete() ;
             $table->timestamps();
         });
     }

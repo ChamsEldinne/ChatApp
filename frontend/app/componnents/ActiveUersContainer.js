@@ -26,10 +26,11 @@ const ActiveUersContainer=memo (()=>{
   })
  
   return (
-    <div className="active-users flex flex-row items-center p-2 h-fit w-0 min-w-full">
+    <div className="active-users flex flex-row items-center overflow-x-auto p-2 min-h-fit w-0 min-w-full">
       {isLoading && [1, 2, 3, 4,5,6,7].map((index) => (
         <ActiveUserContainerLoading key={index} />
       ))}
+
       {data && data.map((user)=><ActiveUserContainer  key={user.id} user={user} />)}
     </div>
   );

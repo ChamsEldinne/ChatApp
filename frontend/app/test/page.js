@@ -1,12 +1,11 @@
 'use client'
-import LastReaderContainer from '../componnents/LastReaderContainer'
-
+import ChatFooter from "../componnents/ChatFooter" 
 
 const PersonalLandingPage = () => {
 
   return (
-    <div>
-      <LastReaderContainer />
+    <div className="my-[300px]">
+      <ChatFooter />
     </div>
   )  
 };

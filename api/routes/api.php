@@ -60,5 +60,4 @@ Route::group(['middleware'=>['auth:sanctum']],routes: function(){
     Route::post('/lastReadMessage',[LastReadMessageController::class,"updateOrCreate"]) ;
     Route::get('/lastReadMessage',[LastReadMessageController::class,"show"]) ;
 
-    Route::get('/relation',[LastReadMessageController::class,'relation']) ;
 });

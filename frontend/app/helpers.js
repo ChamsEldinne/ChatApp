@@ -1,15 +1,18 @@
 export const getToken=()=>{
+ // if (typeof window !== "undefined") {
     let token = window.localStorage.getItem("token");
-  if (token != null) {
-    return token[0] === `"` ? JSON.parse(token) : token;
-  }
-  token=window.sessionStorage.getItem('token') ;
-  if(token!=null){
-    return token[0] === `"` ? JSON.parse(token) : token;
-  }
+    if (token != null) {
+      return token[0] === `"` ? JSON.parse(token) : token;
+    }
+    token=window.sessionStorage.getItem('token') ;
+    if(token!=null){
+      return token[0] === `"` ? JSON.parse(token) : token;
+    }
+  //}
   return null;
 }
 export const getUser = () => {
+  if (typeof window !== "undefined") {
     let user = window.localStorage.getItem("user");
     if (user != null) {
       return JSON.parse(user) 
@@ -19,6 +22,7 @@ export const getUser = () => {
       return  JSON.parse(user) 
     }
     return null;
+  }
 };
 
 export const getDifrnecInMinuts=(d1,d2)=>{

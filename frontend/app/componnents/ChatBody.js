@@ -9,13 +9,14 @@ import { getToken, getUser } from '../helpers';
 import useBlocks from '../hookes/useBlocks';
 import useEcho from '../hookes/useEcho';
 import Typing from './Typing';
-import useScrooll from '../hookes/useScrooll';
 import Reciver2 from './Reciver2'
 import axiosClient from '../axiosClient';
-import { useQuery } from '@tanstack/react-query';
+import useIntersectionObserver from '../hookes/useIntersectionObserver' ;
+
+// import {useQueryClient } from '@tanstack/react-query';
 
 
-function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextPage,status,messages,reciver,isLoading}) {
+function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,lastRead,isFetchingNextPage,status,messages,reciver,isLoading}) {
 
   function ScrollToBottomn(){
     if(chatBodyRef.current){
@@ -23,24 +24,20 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextP
       setScrollToBottomn(false) ;
     }
   }
+  // const queryClient = useQueryClient();
 
   const {blocks} = useBlocks(messages,ScrollToBottomn);
   const chatBodyRef=useRef() ;
-  const [scrollToBottomn,setScrollToBottomn]=useScrooll(chatBodyRef,fetchNextPage) ;
+  const [scrollToBottomn,setScrollToBottomn]=useState(false) ;
   const user=getUser() ;
 
   const [requestedTyping,setRequestedTyping]=useState({isTyping:false,user: {id:null} }) ;
 
-
+  useEffect(()=>{
+    console.log("rerender ")
+  })
 
   const token=getToken() ;
-
-  useEffect(()=>{
-    if(messages.length==0){
-      setScrollToBottomn(false) ;
-    }
-  },[blocks])
-
 
   const echo= useEcho() ;
 
@@ -73,66 +70,11 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextP
   
   },[isTyping,echo]) 
 
-  async function getRelationId(){
-    const response=await axiosClient.get("/api/relation",{
-      params:{
-        "type":urlParams.type ,
-        "reciver_id" :urlParams.id
-      },
-      headers:{
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    return response.data ;
-  }
-  const relationId=useQuery({
-    queryKey:['relationId',urlParams.type,urlParams.id] ,
-    queryFn:getRelationId ,
-    staleTime:Infinity ,
-  }) 
-
-  
-
-
-  async function fetchLastRead(){
-    const response =await axiosClient.get('/api/lastReadMessage',{
-      params:{
-        relation_id: relationId.data.relation.id, 
-      },
-      headers:{
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    }) ;
-    return response.data ;
-  }
-
-  const lastRead=useQuery({
-    queryKey:["lastRead",urlParams.type,urlParams.id] ,
-    queryFn:fetchLastRead ,
-    staleTime:Infinity ,
-    retry:2 ,  
-    enabled:!!relationId.data
-  })
-
-  useEffect(()=>{
-    console.log(lastRead.data) ;
-  },[lastRead])
-
-  const [firstIsDone,setFirstIsDone]=useState(false) ;
-
-  useEffect(()=>{
-    if(blocks.length==0 && !firstIsDone){
-      ScrollToBottomn()
-      setFirstIsDone(true) ;
-    }
-  },[messages])
-
-  async function UpdateLatRead(relationId,messageId){
+  async function UpdateLatRead(reciverId,type, messageId){
     const response=await axiosClient.post('/api/lastReadMessage',
       {
-        relation_id:relationId,
+        type:type ,
+        reciver_id :reciverId,
         message_id:messageId ,
       },{
         headers:{
@@ -141,13 +83,39 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextP
         }
     })
   }
-  useEffect(()=>{
-    if(relationId.data && messages[0]){
-      UpdateLatRead(relationId.data.relation.id,messages[0]?.id)
-    } 
-  },[relationId.data,messages])
+
+  // useEffect(()=>{
+  //   if( messages[0] ){
+  //     UpdateLatRead(urlParams.id,urlParams.type,messages[0]?.id)
+  //     queryClient.invalidateQueries({queryKey:["lastRead",urlParams.type,urlParams.id],exact:true}) 
+  //   } 
+  // },[messages])
 
 
+
+  // const [firstIsDone,setFirstIsDone]=useState(false) ;
+
+  // useEffect(()=>{
+  //   if(status=='pending' && !firstIsDone){
+  //     ScrollToBottomn()
+  //     setFirstIsDone(true) ;
+  //   }
+
+  //   ScrollToBottomn()
+  // },[messages])
+
+
+
+
+  const [thirdMessageRef, isIntersectingthirdMessage] = useIntersectionObserver({});
+
+   useEffect(()=>{
+      if(!isIntersectingthirdMessage){
+        setScrollToBottomn(true)
+      }else{
+        setScrollToBottomn(false) ;
+      }
+   },[isIntersectingthirdMessage])
 
 
   return (
@@ -160,7 +128,10 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,isFetchingNextP
     {status==="pending" && <ChatLoading />}
     {isFetchingNextPage && <div className='flex justify-center w-full my-3'><LoadingSpiner /> </div> }
     
-    {blocks.map((b,index)=><MessageContainer lastReadData={lastRead.data} prev={index==0 ?null : blocks[index-1]} urlParams={urlParams}  key={index} block={b} />)}
+    {blocks.map((b,index)=>
+     <div key={index} ref={index==blocks.length-1?thirdMessageRef:null} >
+      <MessageContainer  setScrollToBottomn={setScrollToBottomn} fetchNextPage={fetchNextPage} index={index} lastReadData={lastRead.data} prev={index==0 ?null : blocks[index-1]} urlParams={urlParams}   block={b} />
+     </div>)}
     {requestedTyping?.isTyping &&( (urlParams.type=='user' && requestedTyping.user.id==urlParams.id) || urlParams.type=='group' )? <Typing user={requestedTyping.user}/>:<div className='size-4'></div> }
   </div>
   )

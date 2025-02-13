@@ -1,8 +1,9 @@
 'use client'
-import { useState ,useEffect } from 'react';
+import { useState ,useEffect, useRef } from 'react';
 import React from 'react'
 import { getToken } from '../helpers';
 import axiosClient from '../axiosClient';
+import PickerContainer from './PickerContainer' ;
 
 
 function ChatFooter({urlParams=null,setIstyping}) {
@@ -13,15 +14,16 @@ function ChatFooter({urlParams=null,setIstyping}) {
     const [error,setError]=useState(false) ;
 
     const token=getToken() ;
-    
-    async function sendMessage(e){
+ 
+   
+    async function sendMessage(e,str=null){
         e.preventDefault()
         if(urlParams && !loadingOnMessageSending){
             try{
                 setLoadingOnMessageSending(true) ;
                 const url=`/api/sendeMessage/${urlParams.type=='user'? "frinde":"group"} `
                 const response=await axiosClient.post(url,{
-                    'message' : message,
+                    'message' :str==null? message:str,
                     'reciver_id':urlParams.id ,
                 },{
                     headers:{
@@ -63,6 +65,8 @@ function ChatFooter({urlParams=null,setIstyping}) {
         }
     },[error])
 
+   
+
   return (
     <div className="chat-footer flex-none ">
         <div className="flex flex-row items-center p-4">
@@ -94,19 +98,15 @@ function ChatFooter({urlParams=null,setIstyping}) {
                     className={`${error? "border-red-500":""} rounded-full py-2  pl-3 pr-10 w-full group border border-gray-800 focus:border-gray-700 bg-gray-800 focus:bg-gray-900 focus:outline-none text-gray-200 focus:shadow-md transition duration-300 ease-in`}
                         type="text" value={message} onChange={(e)=>handleInputChange(e) } placeholder="Aa"
                         onKeyDown={handleKeyDown}/>
-                    <div className='absolute top-0 right-0 mt-2 mr-3 flex justify-center items-center gap-2'>
-                        <button type="button" className=" flex-shrink-0 focus:outline-none  text-blue-600 hover:text-blue-700 w-6 h-6">
-                            <svg viewBox="0 0 20 20" className="w-full h-full fill-current">
-                                <path d="M10 20a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM6.5 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm7 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm2.16 3a6 6 0 0 1-11.32 0h11.32z" />
-                            </svg>
-                        </button>
-                    </div>     
+                       
                 </label>
+               
+                <PickerContainer setMessage={setMessage} />
             </div>
             <button onClick={(e)=>sendMessage(e)} type="button" className=" flex flex-shrink-0 focus:outline-none mx-2  text-blue-600 hover:text-blue-700  ">
                             <svg width="34px" height="34px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M16.1391 2.95907L7.10914 5.95907C1.03914 7.98907 1.03914 11.2991 7.10914 13.3191L9.78914 14.2091L10.6791 16.8891C12.6991 22.9591 16.0191 22.9591 18.0391 16.8891L21.0491 7.86907C22.3891 3.81907 20.1891 1.60907 16.1391 2.95907ZM16.4591 8.33907L12.6591 12.1591C12.5091 12.3091 12.3191 12.3791 12.1291 12.3791C11.9391 12.3791 11.7491 12.3091 11.5991 12.1591C11.3091 11.8691 11.3091 11.3891 11.5991 11.0991L15.3991 7.27907C15.6891 6.98907 16.1691 6.98907 16.4591 7.27907C16.7491 7.56907 16.7491 8.04907 16.4591 8.33907Z" fill="#2363ef"></path> </g></svg>
             </button>
-            <button type="button" className="group-focus:hidden flex flex-shrink-0 focus:outline-none mx-2  text-blue-600 hover:text-blue-700 w-6 h-6">
+            <button onClick={(e)=>sendMessage(e,"👍")} type="button" className="group-focus:hidden flex flex-shrink-0 focus:outline-none mx-2  text-blue-600 hover:text-blue-700 w-6 h-6">
                 <svg viewBox="0 0 20 20" className="w-full h-full fill-current">
                     <path d="M11.0010436,0 C9.89589787,0 9.00000024,0.886706352 9.0000002,1.99810135 L9,8 L1.9973917,8 C0.894262725,8 0,8.88772964 0,10 L0,12 L2.29663334,18.1243554 C2.68509206,19.1602453 3.90195042,20 5.00853025,20 L12.9914698,20 C14.1007504,20 15,19.1125667 15,18.000385 L15,10 L12,3 L12,0 L11.0010436,0 L11.0010436,0 Z M17,10 L20,10 L20,20 L17,20 L17,10 L17,10 Z"/>
                 </svg>

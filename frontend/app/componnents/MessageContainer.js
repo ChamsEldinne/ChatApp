@@ -1,7 +1,9 @@
 import { getDifrnecInMinuts } from "../helpers";
 import Message from "./Message";
+import {useEffect } from "react";
+import useIntersectionObserver from '../hookes/useIntersectionObserver' ;
 
-function MessageContainer({block=[],prev=null,urlParams,lastReadData}){  
+function MessageContainer({block=[],prev=null,urlParams,lastReadData,index,fetchNextPage,setScrollToBottomn,isThird }){  
 
   const formatter = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -17,6 +19,16 @@ function MessageContainer({block=[],prev=null,urlParams,lastReadData}){
   if(prev!=null){
     diffInMinutes = getDifrnecInMinuts(block[0].time,prev[0].time);
   }
+
+  const [lastMessageRef, isIntersectingLastMessage] = useIntersectionObserver({});
+  useEffect(() => {
+    if (isIntersectingLastMessage) {
+      fetchNextPage() ;
+    }
+  }, [isIntersectingLastMessage]);
+
+
+
   
   return (
       <div className="my-3 w-full">
@@ -30,7 +42,11 @@ function MessageContainer({block=[],prev=null,urlParams,lastReadData}){
           </div>
           <div className="messages w-full text-sm text-gray-700 grid grid-flow-row gap-2">
             {block[0].reciv_or_sent==0 && urlParams.type=="group" &&<h1 className="text-sm text-gray-400  -my-4 ">{block[0].user_name}</h1>}
-            {block.map((message,index)=><Message  lastReadData={lastReadData} urlParams={urlParams} key={message.id} message={message} prev={index!=0} next={index<block.length-1}  />)}
+            {block.map((message,i)=>
+              <div key={message.id} ref={index==0?lastMessageRef:isThird?thirdMessageRef : null} >
+                <Message lastReadData={lastReadData} urlParams={urlParams}  message={message} prev={i!=0} next={i<block.length-1}  />
+              </div>
+            )}
           </div>
       </div>
     </div>

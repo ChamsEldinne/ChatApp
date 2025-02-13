@@ -97,11 +97,11 @@ class Messages extends Controller
     public function reciver(Request $request){
         $request->validate([
             'reciver_id'=>['required','integer'] ,
-            "type"=>['boolean'] //1user,0group
+            "type"=>["required","string","in:user,group"] ,
         ]);
         
         $reciver=null ;
-        if($request->type==1){
+        if($request->type=="user"){
             $reciver=DB::select("
             SELECT users.id ,users.name ,MAX( personal_access_tokens.last_used_at ) as last_used_at ,
                 CASE 
@@ -112,7 +112,7 @@ class Messages extends Controller
             where  personal_access_tokens.tokenable_id= :user_id and users.id= :user_id and personal_access_tokens.tokenable_type='App\Models\User' 
             ",["user_id"=>$request->reciver_id]) ;
             $reciver[0]->type='user' ;
-        }else if($request->type==0){
+        }else if($request->type=="group"){
             $reciver=DB::select("SELECT groups.id , groups.name 
             from groups 
             where groups.id=:group_id",

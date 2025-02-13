@@ -77,6 +77,10 @@ class User extends Authenticatable
         ->get();
     }
 
+    public function last_read_message(){
+        return $this->morphMany(LastReadMessage::class,"messageable") ;
+    }
+
     
     public function sendedUsers(){
         return $this->morphToMany(User::class,'relationable','relation')->withPivot('status') ;

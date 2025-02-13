@@ -4,13 +4,12 @@ import { getToken } from './helpers'
 import { useRouter } from 'next/navigation'
 import LoadingSpiner from './componnents/LoadingSpiner'
 import axiosClient from './axiosClient'
-
 import React from 'react'
+
 function page() {
   const router=useRouter()
   const token=getToken() ;
-
-  async function getUser(){
+  async function getUser(token){
     try{
       const response=await axiosClient.get('/api/user',{
         headers:{
@@ -29,10 +28,11 @@ function page() {
      }
   }
   useEffect(()=>{
+    
     if(token==null){
       router.push('/login')
     }
-    getUser()
+    getUser(token)
 
   },[])
 
