@@ -3,11 +3,11 @@ import React from 'react'
 import ChatFooter from '../../../componnents/ChatFooter'
 import ChatHeader from '../../../componnents/ChatHeader'
 import ChatBody from '../../../componnents/ChatBody'
-import { useState,useEffect } from 'react'
+import { useState,useEffect,useRef } from 'react'
 import { getToken } from '../../../helpers'
 import { useInfiniteQuery,useQuery } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation'
-import {fetchReciver,fetchMessages ,fetchLastRead} from '../../fetch/index'
+import {fetchReciver,fetchMessages ,fetchLastRead,ScrollToBottomn} from '../../fetch/index'
 
 export default function Page() {
 
@@ -28,7 +28,7 @@ export default function Page() {
       const nextPageUrl = lastPage.pagination.next_page_url;
       return nextPageUrl ? lastPage.pagination.current_page + 1 : undefined;
     },
-    staleTime:Infinity,
+    staleTime:Infinity,  
   })
 
   const reciver=useQuery({
@@ -45,14 +45,20 @@ export default function Page() {
     staleTime:Infinity ,
     retry:2 ,  
   })
+  const chatBodyRef=useRef() ;
+
+
+  useEffect(()=>{
+    ScrollToBottomn(chatBodyRef) ;
+  },[]);
  
 
   
   return (
     <div className='flex'>
-      <section className={ `flex scroll-smooth lg:w-[40vw]  w-screen md:w-[60vw] z-10 md:flex flex-col flex-auto bg-gray-900 border-l border-r relative border-gray-800`}>
+      <section className={ `flex overflow-hidden lg:w-[40vw]  w-screen md:w-[60vw] z-10 md:flex flex-col flex-auto bg-gray-900 border-l border-r relative border-gray-800`}>
         <ChatHeader isLoading={reciver.isLoading} reciver={ reciver.data ? reciver.data.reciver[0]:null} />
-        <ChatBody isLoading={reciver.isLoading} reciver={ reciver.data ? reciver.data.reciver[0]:null}
+        <ChatBody chatBodyRef={chatBodyRef}  isLoading={reciver.isLoading} reciver={ reciver.data ? reciver.data.reciver[0]:null}
           fetchNextPage={fetchNextPage} isTyping={isTyping} hasNextPage={hasNextPage}
           messages={data!=null ? data.pages.flatMap(item => item.messages) :[]}
           urlParams={urlParams} status={status} isFetchingNextPage={isFetchingNextPage}  lastRead={lastRead}  />
@@ -63,6 +69,6 @@ export default function Page() {
           <h1 className='text-xl text-center text-gray-200 font-semibold'>comming soon</h1>
       </div>
 
-     </div>
+    </div>
   )
 }

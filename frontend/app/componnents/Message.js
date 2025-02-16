@@ -1,13 +1,13 @@
 'use client'
-import axiosClient from "../axiosClient";
 import { getToken } from "../helpers";
-import { useState ,useRef} from "react";
+import { useState ,useRef, memo} from "react";
 import { useMutation,useQueryClient } from "@tanstack/react-query";
 import LoadingSpiner from "./LoadingSpiner";
 import useCloseDivONRandomClick from "../hookes/useCloseDivONRandomClick";
 import LastReaderContainer from "./LastReaderContainer"
+import { updateMessage , deleteMessage } from "../chat/fetch";
 
-function Message({message,prev,next,urlParams ,lastReadData=[]}){
+const Message=memo(({message,prevBlock,next,urlParams ,lastReadData=[] } )=>{
     const queryClient=useQueryClient() ;    
     const formatter = new Intl.DateTimeFormat('en-US', {
         // year: 'numeric',
@@ -24,23 +24,12 @@ function Message({message,prev,next,urlParams ,lastReadData=[]}){
     const divRef=useRef() ;
 
     useCloseDivONRandomClick(update,setUpdate,divRef) ;
+    const token=getToken() ;
 
 
-    const updateMessage=async()=>{
-        const token=getToken() 
-        const response=await axiosClient.put(`/api/message/${message.id}`,{
-            'message' : updateVlaue,
-        },{
-            headers:{
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }             
-        })
-        return response ;
-    }
 
     const updateFn=useMutation({
-        mutationFn:updateMessage,
+        mutationFn:()=>updateMessage(message.id,token),
         onSuccess:()=>{         
             queryClient.invalidateQueries({queryKey:['chat',urlParams.type,urlParams.id] ,exact:true})
         }
@@ -56,17 +45,10 @@ function Message({message,prev,next,urlParams ,lastReadData=[]}){
         }
     };
 
-    const deleteMessage=async ()=>{
-        const token=getToken() 
-        await axiosClient.delete(`/api/message/${message.id}`,{
-            headers:{
-                'Authorization': `Bearer ${token}`,
-            }             
-        })
-    }
+
 
     const deletFn=useMutation({
-        mutationFn:deleteMessage,
+        mutationFn:()=>deleteMessage(message.id,token),
         onSuccess:()=>{      
             queryClient.invalidateQueries( {queryKey:['chat',urlParams.type,urlParams.id],exact:true})
         }
@@ -86,11 +68,11 @@ function Message({message,prev,next,urlParams ,lastReadData=[]}){
                         <p>Press Enter To Update</p>
                     </div>
                     :
-                    <p 
-                    className={`px-6 py-3 ${prev? "":"rounded-t-full"} ${next? "":"rounded-b-full"} ${message.reciv_or_sent?"rounded-l-full order-last bg-blue-500 ":"bg-gray-800  rounded-r-full " }  max-w-xs lg:max-w-md text-gray-200`}>
+                    <div 
+                    className={`px-6 py-3 ${prevBlock? "":"rounded-t-full"} ${next? "":"rounded-b-full"} ${message.reciv_or_sent?"rounded-l-full order-last bg-blue-500 ":"bg-gray-800  rounded-r-full " }  max-w-xs lg:max-w-md text-gray-200`}>
                 
                     {updateFn.isPending || deletFn.isPending ? <LoadingSpiner/> : message.message}
-                    </p>
+                    </div>
                 }
                 
                     
@@ -129,6 +111,6 @@ function Message({message,prev,next,urlParams ,lastReadData=[]}){
     </div>
 
     )
-  }
+}) ;
 
-  export default Message
+export default Message

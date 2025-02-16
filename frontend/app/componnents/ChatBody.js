@@ -10,35 +10,19 @@ import useBlocks from '../hookes/useBlocks';
 import useEcho from '../hookes/useEcho';
 import Typing from './Typing';
 import Reciver2 from './Reciver2'
-import axiosClient from '../axiosClient';
 import useIntersectionObserver from '../hookes/useIntersectionObserver' ;
+import { UpdateLatRead } from '../chat/fetch/index';
+import { useQueryClient } from '@tanstack/react-query';
 
-// import {useQueryClient } from '@tanstack/react-query';
 
+function ChatBody({ fetchNextPage,urlParams,chatBodyRef,isTyping,hasNextPage,lastRead,isFetchingNextPage,status,messages,reciver,isLoading}) {
 
-function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,lastRead,isFetchingNextPage,status,messages,reciver,isLoading}) {
-
-  function ScrollToBottomn(){
-    if(chatBodyRef.current){
-      chatBodyRef.current.scrollTop=chatBodyRef.current.scrollHeight ;
-      setScrollToBottomn(false) ;
-    }
-  }
-  // const queryClient = useQueryClient();
-
-  const {blocks} = useBlocks(messages,ScrollToBottomn);
-  const chatBodyRef=useRef() ;
+  const queryClient = useQueryClient();
+  const {blocks} = useBlocks(messages);
   const [scrollToBottomn,setScrollToBottomn]=useState(false) ;
   const user=getUser() ;
-
   const [requestedTyping,setRequestedTyping]=useState({isTyping:false,user: {id:null} }) ;
-
-  useEffect(()=>{
-    console.log("rerender ")
-  })
-
   const token=getToken() ;
-
   const echo= useEcho() ;
 
 
@@ -70,69 +54,55 @@ function ChatBody({ fetchNextPage,urlParams,isTyping,hasNextPage,lastRead,isFetc
   
   },[isTyping,echo]) 
 
-  async function UpdateLatRead(reciverId,type, messageId){
-    const response=await axiosClient.post('/api/lastReadMessage',
-      {
-        type:type ,
-        reciver_id :reciverId,
-        message_id:messageId ,
-      },{
-        headers:{
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-    })
-  }
+ const [firstIsDone,setFirstIsDone]=useState(false) ;
+  useEffect(()=>{
+    if( messages[0] && !firstIsDone ){
+      setFirstIsDone(true) ;
+      UpdateLatRead(urlParams.id,urlParams.type,messages[0]?.id,token)
+      queryClient.invalidateQueries({queryKey:["lastRead",urlParams.type,urlParams.id],exact:true}) 
+    } 
+  },[messages])
 
-  // useEffect(()=>{
-  //   if( messages[0] ){
-  //     UpdateLatRead(urlParams.id,urlParams.type,messages[0]?.id)
-  //     queryClient.invalidateQueries({queryKey:["lastRead",urlParams.type,urlParams.id],exact:true}) 
-  //   } 
-  // },[messages])
+  //track last block intersction to display the arrow down while scrolling
+  const [lastBlockRef, isIntersectingLastBlockRef] = useIntersectionObserver({});
 
+  useEffect(()=>{
+    if(!isIntersectingLastBlockRef){
+      setScrollToBottomn(true)
+    }else{
+      setScrollToBottomn(false) ;
+    }
+  },[isIntersectingLastBlockRef])
 
-
-  // const [firstIsDone,setFirstIsDone]=useState(false) ;
-
-  // useEffect(()=>{
-  //   if(status=='pending' && !firstIsDone){
-  //     ScrollToBottomn()
-  //     setFirstIsDone(true) ;
-  //   }
-
-  //   ScrollToBottomn()
-  // },[messages])
-
-
-
-
-  const [thirdMessageRef, isIntersectingthirdMessage] = useIntersectionObserver({});
-
-   useEffect(()=>{
-      if(!isIntersectingthirdMessage){
-        setScrollToBottomn(true)
-      }else{
-        setScrollToBottomn(false) ;
-      }
-   },[isIntersectingthirdMessage])
+ //track the first block intersction to fetch the next page 
+  const [firstBlockRef, isIntersectingFirstBlockRef] = useIntersectionObserver({});
+  useEffect(() => {
+    if (isIntersectingFirstBlockRef) {
+      fetchNextPage() ;
+    }
+  }, [isIntersectingFirstBlockRef]);
+  
 
 
   return (
-  <div ref={chatBodyRef} className="chat-body w-full justify-end scroll-smooth p-4 flex-1 min-h-[70vh]  z-10  overflow-y-scroll " >
+  <div ref={chatBodyRef} className="chat-body w-full flex-1 overflow-y-auto justify-end scroll-smooth p-4  h-fit min-h-[70vh]  z-10 " >
+   
+
    
    {(!isLoading && !hasNextPage ) &&  <Reciver2 urlParams={urlParams} reciverUser={reciver} />}
     
-    {scrollToBottomn && <ArrowDown ScrollToBottomn={ScrollToBottomn} /> }
+    {scrollToBottomn && <ArrowDown chatBodyRef={chatBodyRef} /> }
 
     {status==="pending" && <ChatLoading />}
     {isFetchingNextPage && <div className='flex justify-center w-full my-3'><LoadingSpiner /> </div> }
     
     {blocks.map((b,index)=>
-     <div key={index} ref={index==blocks.length-1?thirdMessageRef:null} >
-      <MessageContainer  setScrollToBottomn={setScrollToBottomn} fetchNextPage={fetchNextPage} index={index} lastReadData={lastRead.data} prev={index==0 ?null : blocks[index-1]} urlParams={urlParams}   block={b} />
-     </div>)}
+
+      <MessageContainer key={index} isFirstBlock={index==0} firstBlockRef={firstBlockRef} lastBlockRef={lastBlockRef}  isLastBlock={blocks.length-1==index}  lastReadData={lastRead.data} prevBlock={index==0 ?null : blocks[index-1]} urlParams={urlParams}   block={b} />
+    
+    )}
     {requestedTyping?.isTyping &&( (urlParams.type=='user' && requestedTyping.user.id==urlParams.id) || urlParams.type=='group' )? <Typing user={requestedTyping.user}/>:<div className='size-4'></div> }
+    
   </div>
   )
 }

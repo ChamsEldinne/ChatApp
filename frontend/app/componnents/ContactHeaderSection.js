@@ -1,8 +1,8 @@
 'use client'
-import {useState,useEffect,useRef} from 'react'
+import {useState,memo,useRef} from 'react'
 import SideBar from './SideBar';
 import useCloseDivONRandomClick from '../hookes/useCloseDivONRandomClick';
-function ContactHeaderSection({setDisplayCreateGroup}) {
+const ContactHeaderSection=memo( ({setDisplayCreateGroup})=>{
     
     const sideBarRef=useRef() ;
     const [dispalySidBar,setDispalySideBar ]=useState(false) ;
@@ -29,6 +29,6 @@ function ContactHeaderSection({setDisplayCreateGroup}) {
     
         </div>
     )
-}
+}) ;
 
 export default ContactHeaderSection

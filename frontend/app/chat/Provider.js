@@ -6,14 +6,15 @@ import dynamic from "next/dynamic";
 import { useQueryClient } from "@tanstack/react-query";
 import ContactInstance from "../util/ContactInstans";
 import useEcho from "../hookes/useEcho";
-import { getUser } from "../helpers";
+import { getToken, getUser } from "../helpers";
 import { usePathname } from "next/navigation";
+import {UpdateLatRead} from './fetch/index'
 
 const CreateGroup = dynamic(() => import("../componnents/CreateGroup"));
 
 function Provider({ children }) {
   const [displayCreateGroup, setDisplayCreateGroup] = useState(false);
-
+  const token=getToken() ;
   const user = getUser();
   const echo = useEcho();
   const queryClient = useQueryClient();
@@ -25,21 +26,6 @@ function Provider({ children }) {
     return {type:arr[2],id:arr[3]}
   }) ;
 
-
-
-  async function UpdateLatRead(reciverId,type, messageId){
-    const response=await axiosClient.post('/api/lastReadMessage',
-      {
-        type:type ,
-        reciver_id :reciverId,
-        message_id:messageId ,
-      },{
-        headers:{
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-    })
-  }
   
   useEffect(() => {
     if (echo && user) {
@@ -59,10 +45,10 @@ function Provider({ children }) {
           type: message.messsageble_type == "App\\Models\\Group" ? "group" : "user",
           id: ReciverId,
         };
-        // if(urlParams.id==ReciverId && urlParams.type==params.type){
-        //   UpdateLatRead(ReciverId,urlParams.type,message.id)
-        //   queryClient.invalidateQueries({queryKey:["lastRead",urlParams.type,urlParams.id],exact:true}) 
-        // }
+        if(urlParams.id==ReciverId && urlParams.type==params.type){
+          UpdateLatRead(ReciverId,urlParams.type,message.id,token)
+          queryClient.invalidateQueries({queryKey:["lastRead",urlParams.type,urlParams.id],exact:true}) 
+        }
         //update the data in the chat query that are cashed
         queryClient.setQueryData( ["chat", params.type, params.id.toString()],
 

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\v1\RelationsController;
 use App\Http\Controllers\api\v1\Contact ;
+//use Laravel\Socialite\Facades\Socialite;
 
 use App\Http\Controllers\api\v1\LastReadMessageController;
 
@@ -61,3 +62,8 @@ Route::group(['middleware'=>['auth:sanctum']],routes: function(){
     Route::get('/lastReadMessage',[LastReadMessageController::class,"show"]) ;
 
 });
+
+
+// Route::get('/auth/redirect', function () {
+//     return Socialite::driver('github')->redirect();
+// });
