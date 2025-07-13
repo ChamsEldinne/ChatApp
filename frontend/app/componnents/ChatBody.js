@@ -26,6 +26,7 @@ function ChatBody({ fetchNextPage,urlParams,chatBodyRef,isTyping,hasNextPage,las
   const echo= useEcho() ;
 
 
+
   useEffect(()=>{
     if(echo){
       const channle =(urlParams.type=='user') ?
@@ -86,8 +87,6 @@ function ChatBody({ fetchNextPage,urlParams,chatBodyRef,isTyping,hasNextPage,las
 
   return (
   <div ref={chatBodyRef} className="chat-body w-full flex-1 overflow-y-auto justify-end scroll-smooth p-4  h-fit min-h-[70vh]  z-10 " >
-   
-
    
    {(!isLoading && !hasNextPage ) &&  <Reciver2 urlParams={urlParams} reciverUser={reciver} />}
     

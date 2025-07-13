@@ -29,7 +29,7 @@ const Message=memo(({message,prevBlock,next,urlParams ,lastReadData=[] } )=>{
 
 
     const updateFn=useMutation({
-        mutationFn:()=>updateMessage(message.id,token),
+        mutationFn:()=>updateMessage(message.id,token,updateVlaue),
         onSuccess:()=>{         
             queryClient.invalidateQueries({queryKey:['chat',urlParams.type,urlParams.id] ,exact:true})
         }

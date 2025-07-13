@@ -5,7 +5,7 @@ import Link from "next/link";
 const ActiveUserContainer = ({user=null})=> {
   const randomNumber=Math.floor(Math.random() * (100 )) + 1 ;
   return (
-    <Link href={`/chat/user/${user.id}`} className="text-sm h-fit text-center mr-2 cursor-pointer hover:opacity-80 transition-opacity">
+    <Link href={`/chat/user/${user.id}`} className="text-sm max-w-16 h-fit text-center mr-2 cursor-pointer hover:opacity-80 transition-opacity">
       <div className="p-1 border-4 border-transparent rounded-full">
         <div className="size-16 relative flex flex-shrink-0">
           <img className="shadow-md rounded-full size-16 object-cover"
@@ -22,7 +22,7 @@ const ActiveUserContainer = ({user=null})=> {
         }
         </div>
       </div>
-      <p>{user?.name}</p>
+      <p className="truncate">{user?.name}</p>
     </Link>
   )
 }

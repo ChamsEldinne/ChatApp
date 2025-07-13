@@ -57,6 +57,8 @@ class Contact extends Controller
         );
       $total = $res[0]->freinde_count;
 
+
+
         $pagination = [
             'current_page' => $page,
             'per_page' => $perPage,

@@ -62,7 +62,7 @@ export const UpdateLatRead= async (reciverId,type, messageId,token)=>{
   })
 }
 
-export const updateMessage=async(id,token)=>{
+export const updateMessage=async(id,token,updateVlaue)=>{
         
   const response=await axiosClient.put(`/api/message/${id}`,{
       'message' : updateVlaue,

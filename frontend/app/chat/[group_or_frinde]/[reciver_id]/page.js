@@ -66,7 +66,7 @@ export default function Page() {
       </section>
 
       <div className={`hidden lg:flex w-[25vw] z-10  justify-center  items-center bg-gray-900 border-l relative border-gray-800`} >
-          <h1 className='text-xl text-center text-gray-200 font-semibold'>comming soon</h1>
+          {/* <h1 className='text-xl text-center text-gray-200 font-semibold'>comming soon</h1> */}
       </div>
 
     </div>
